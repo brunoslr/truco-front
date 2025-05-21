@@ -258,8 +258,7 @@ To build a Docker image using the swe.Dockerfile, you need to name your branch a
 Branch Name Format: swe-'<placeholder>'.  
 Example: If you want to use the swe.Dockerfile, create a branch with a name like "swe-feature1".
 
-
-## Truco Mineiro Rules
+# Truco Mineiro Rules
 
 The game uses a 40-card deck (8s, 9s, and 10s removed).
 
