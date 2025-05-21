@@ -31,13 +31,4 @@ const MainApp: React.FC = () => {
   );
 };
 
-function App() {
-  return (
-    <BrowserRouter>
-      <AppRoutes />
-      <MainApp />
-    </BrowserRouter>
-  );
-}
-
-export default App;
+export default MainApp;
