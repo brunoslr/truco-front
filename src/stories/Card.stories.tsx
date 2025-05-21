@@ -1,24 +1,26 @@
-import React from 'react';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import Card from '../components/Card';
 
-export default {
-  title: 'Card',
+const meta: Meta<typeof Card> = {
+  title: 'Components/Card',
   component: Card,
-} as ComponentMeta<typeof Card>;
+};
+export default meta;
 
-const Template: ComponentStory<typeof Card> = (args) => <Card {...args} />;
+type Story = StoryObj<typeof meta>;
 
-export const Default = Template.bind({});
-Default.args = {
-  value: '4',
-  suit: '♠',
-  highlight: false,
+export const Default: Story = {
+  args: {
+    value: 'A',
+    suit: '♠',
+    highlight: false,
+  },
 };
 
-export const Manilha = Template.bind({});
-Manilha.args = {
-  value: '4',
-  suit: '♠',
-  highlight: true,
+export const Highlighted: Story = {
+  args: {
+    value: '7',
+    suit: '♥',
+    highlight: true,
+  },
 };

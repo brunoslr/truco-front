@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 import { getMockPlayerHand } from './services/mockBackend';
-import { Card } from './models/Card';
+import type { Card } from './models/Card';
 
 const MainApp: React.FC = () => {
   const [playerHand, setPlayerHand] = useState<Card[]>([]);
 
   useEffect(() => {
-    if (process.env.REACT_APP_USE_MOCK_BACKEND === 'true') {
+    if (import.meta.env.VITE_REACT_APP_USE_MOCK_BACKEND === 'true') {
       const mockHand = getMockPlayerHand();
       setPlayerHand(mockHand);
     } else {
