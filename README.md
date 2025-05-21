@@ -15,5 +15,3 @@ A regular hand is worth 2 points.
 A hand with Truco is worth 4 points, with increments of 4 points if raised.
 
 The first team to reach 12 points wins the game.
-
-The game does not include Envido or Flor.
