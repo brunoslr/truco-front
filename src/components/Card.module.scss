@@ -1,0 +1,19 @@
+.card {
+  border: 1px solid #000;
+  border-radius: 8px;
+  padding: 10px;
+  width: 60px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.highlight {
+  border-color: gold;
+}
+
+.value, .suit {
+  font-size: 18px;
+}
