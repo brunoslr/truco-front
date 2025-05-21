@@ -4,6 +4,17 @@
 
 This project is a single-player web implementation of Truco Mineiro, built using React and TypeScript.
 
+## Packages Used
+
+- **React**: UI library for building user interfaces
+- **TypeScript**: Typed superset of JavaScript
+- **Vite**: Fast frontend build tool
+- **React Router DOM**: Routing for React apps
+- **classnames**: Utility for conditionally joining classNames
+- **Storybook**: UI component explorer and documentation tool
+- **Sass (SCSS)**: CSS preprocessor for styling components
+- **Jest**: Unit testing framework for React components
+
 ## Rules of Truco Mineiro
 
 - The game uses a 40-card deck (8s, 9s, and 10s removed).
@@ -20,31 +31,46 @@ This project is a single-player web implementation of Truco Mineiro, built using
 
 ## Using the Mock Backend
 
-To use the mock backend for development purposes, set the environment variable `REACT_APP_USE_MOCK_BACKEND` to `true` in the `.env` file.
+To use the mock backend for development purposes, set the environment variable `VITE_REACT_APP_USE_MOCK_BACKEND` to `true` in the `.env` file:
 
 ```env
-REACT_APP_USE_MOCK_BACKEND=true
+VITE_REACT_APP_USE_MOCK_BACKEND=true
 ```
 
 This will enable the mock backend service that provides placeholder data for the player's hand. Once the actual backend is implemented, you can remove or disable the mock backend by setting the environment variable to `false`.
 
-## Getting Started
+## Developer Instructions
 
-To get started with the project, follow these steps:
+### Install dependencies
+```powershell
+npm install
+```
 
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Start the development server: `npm run dev`
-4. Open Storybook for component development: `npm run storybook`
+### Run the development server
+```powershell
+npm run dev
+```
+- Open [http://localhost:5173/](http://localhost:5173/) (or the port shown in your terminal) to view the app.
 
-## Available Scripts
+### Run Storybook (Component Explorer)
+```powershell
+npm run storybook
+```
+- Open [http://localhost:6006/](http://localhost:6006/) (or the port shown in your terminal) to view Storybook.
 
-In the project directory, you can run:
+### Build for production
+```powershell
+npm run build
+```
 
-- `npm run dev`: Starts the development server.
-- `npm run build`: Builds the project for production.
-- `npm run storybook`: Starts Storybook for component development.
-- `npm run test`: Runs the test suite.
+### Run unit tests (Jest)
+```powershell
+npm test
+```
+- Runs all unit tests using Jest. You can also use `npx jest` for advanced options.
+- Test files are located alongside their components (e.g., `src/components/Card.test.tsx`).
+
+This project uses **Jest** and **React Testing Library** for unit testing React components.
 
 ## Learn More
 
