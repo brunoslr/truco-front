@@ -1,13 +1,31 @@
-# Codemie 🤖
+# Truco Mineiro Rules
 
-## Running in docker 🐳
+The game uses a 40-card deck (8s, 9s, and 10s removed).
 
-### Requirements
+The card ranking is as follows:
+
+1. 4 of Clubs (Zap)
+2. 7 of Hearts (Copas)
+3. Ace of Spades (Espadão)
+4. 7 of Diamonds (Espadinha)
+5. 3s, 2s, Aces, Kings, Jacks, Queens, 7 of Spades, 7 of Clubs, 6s, 5s, 4s
+
+A regular hand is worth 2 points.
+
+A hand with Truco is worth 4 points, with increments of 4 points if raised.
+
+The first team to reach 12 points wins the game.
+
+The game does not include Envido or Flor.
+
+# Running in docker 🐳
+
+## Requirements
 
 - `docker` (or alternative)
 - `docker-compose`
 
-### Starting up
+## Starting up
 
 - Run
   ```bash
@@ -15,13 +33,13 @@
   ```
 - Check out `http://localhost:8080/docs`
 
-## Running on bare metal 🐍
+# Running on bare metal 🐍
 
-### Requirements 
+## Requirements 
 - Python (>= 3.12)
 - [Poetry](https://python-poetry.org/)
 
-### Starting up
+## Starting up
 - Run
   ```bash
   poetry install
@@ -38,18 +56,18 @@
   ```
 - Up and running! 🔥 Check out `http://localhost:8080/docs`
 
-### Database Migrations
+## Database Migrations
 For information about working with database migrations, see the [Alembic README](src/external/alembic/README).
 
-## Run unit tests 🧪
+# Run unit tests 🧪
 ```bash
 poetry run pytest tests/
 ```
 
-## Ruff Linter Instructions 📝
+# Ruff Linter Instructions 📝
 Ruff is a fast Python linter that can be used to ensure code quality. Follow the instructions below to use Ruff linter in this project.
 
-### Installation 🛠️
+## Installation 🛠️
 To install Ruff, you can use Poetry:
 ```bash
 poetry add ruff
@@ -57,11 +75,11 @@ poetry add ruff
 
 Sure, here's the revised README section with both lint and format commands:
 
-### Running Ruff 🚀
+## Running Ruff 🚀
 
 To run Ruff on your codebase, use the following commands:
 
-#### Linting
+### Linting
 
 To lint all Python files in the current directory and its subdirectories, use:
 
@@ -69,7 +87,7 @@ To lint all Python files in the current directory and its subdirectories, use:
 poetry run ruff check
 ```
 
-#### Formatting
+### Formatting
 
 To format all Python files in the current directory and its subdirectories, use:
 
@@ -79,7 +97,7 @@ poetry run ruff format
 
 This ensures your code is both linted and formatted consistently.
 
-### Configuration ⚙️
+## Configuration ⚙️
 You can configure Ruff by creating a `pyproject.toml` file in the root of your project and adding the following configuration:
 ```toml
 [tool.ruff]
@@ -87,7 +105,7 @@ You can configure Ruff by creating a `pyproject.toml` file in the root of your p
 ```
 For more configuration options, refer to the [Ruff documentation](https://beta.ruff.rs/docs/).
 
-## How to Update `codemie-tools` to the Latest Version
+# How to Update `codemie-tools` to the Latest Version
 
 When new changes are merged into the `codemie-tools` repository, the build pipeline automatically pushes a new version to [PyPI](https://pypi.org/project/codemie-tools/).
 To update the project to use the latest version of `codemie-tools`, follow these steps:
@@ -109,7 +127,7 @@ To update the project to use the latest version of `codemie-tools`, follow these
    ```
    This command will download the new version from PyPI and update the project's lock file accordingly.
 
-## How to use `codemie-tools` and develop and test it locally 🐍
+# How to use `codemie-tools` and develop and test it locally 🐍
 Need to change `codemie-tools` package in `pyproject.toml` file to the following:
 
 ```toml
@@ -124,21 +142,21 @@ poetry update codemie-tools
 
 `NOTE`: don't forget to revert these changes before pushing changes to the repository (`poetry.lock` as well)!
 
-### Another option to use `codemie-tools` package from git repository directly from specific branch:
+## Another option to use `codemie-tools` package from git repository directly from specific branch:
 
 ```toml
 codemie-tools = {git = "https://gitbud.epam.com/epm-cdme/codemie-tools.git", branch = "main"}
 ```
 
-## How to enable different connections and features 🐍
+# How to enable different connections and features 🐍
 
-### How to enable "Generate Image" tool
+## How to enable "Generate Image" tool
 Need to specify 2 env variables for DALL-E model to .env file:
 
 `DALLE_API_URL`
 `DALLE_API_KEY`
 
-### Contribution guidelines 🌳
+# Contribution guidelines 🌳
 
 We use trunk-based development.
 This method implies that pull requests are generated directly to the `main` branch.
@@ -147,7 +165,7 @@ Branch name should match the following pattern: `EPMCDME-XX_short-description`
 
 Commit messages should follow `EPMCDME-XX: Description of a commit`
 
-## Handling Changes in Helm Chart
+# Handling Changes in Helm Chart
 
 This section provides simple steps to update Helm chart and ensure the documentation is current.
 
@@ -166,7 +184,7 @@ brew install helm-docs
     helm-docs .
     ```
 
-## Manage your own LLM and embedding models via Helm Chart
+# Manage your own LLM and embedding models via Helm Chart
 
 By default, AI/Run provides predefined LLM and embedding models for AWS, Azure, GCP. They can be found here: `config/llms`.
 
@@ -227,7 +245,7 @@ Example of providing LLM and embedding models for the `epm-cdme` environment:
                   output: 0
     ```
 
-## CodeMie provides the following metrics 📊:
+# CodeMie provides the following metrics 📊:
 
 | Metric name                      | Description                                  |
 |----------------------------------|----------------------------------------------|
@@ -253,82 +271,7 @@ Example of providing LLM and embedding models for the `epm-cdme` environment:
 | workflow_updated_total           | Number of updated workflows                  |
 | workflow_deleted_total           | Number of deleted workflows                  |
 
-## How to Build Docker Image for SWE Testing 🐳
+# How to Build Docker Image for SWE Testing 🐳
 To build a Docker image using the swe.Dockerfile, you need to name your branch appropriately.  
 Branch Name Format: swe-'<placeholder>'.  
 Example: If you want to use the swe.Dockerfile, create a branch with a name like "swe-feature1".
-
-# Truco Mineiro Rules
-
-The game uses a 40-card deck (8s, 9s, and 10s removed).
-
-The card ranking is as follows:
-
-1. 4 of Clubs (Zap)
-2. 7 of Hearts (Copas)
-3. Ace of Spades (Espadão)
-4. 7 of Diamonds (Espadinha)
-5. 3s, 2s, Aces, Kings, Jacks, Queens, 7 of Spades, 7 of Clubs, 6s, 5s, 4s
-
-A regular hand is worth 2 points.
-
-A hand with Truco is worth 4 points, with increments of 4 points if raised.
-
-The first team to reach 12 points wins the game.
-
-The game does not include Envido or Flor.
-
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
