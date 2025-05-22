@@ -1,25 +1,23 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
-import StakesDisplay, { StakesDisplayProps } from '../components/StakesDisplay';
+import type { Meta, StoryObj } from '@storybook/react';
+import StakesDisplay from '../components/StakesDisplay';
 
-export default {
+const meta: Meta<typeof StakesDisplay> = {
   title: 'Components/StakesDisplay',
   component: StakesDisplay,
-} as Meta;
-
-const Template: Story<StakesDisplayProps> = (args) => <StakesDisplay {...args} />;
-
-export const Default = Template.bind({});
-Default.args = {
-  stakes: 2,
 };
+export default meta;
 
-export const FourPoints = Template.bind({});
-FourPoints.args = {
-  stakes: 4,
+type Story = StoryObj<typeof meta>;
+
+export const TwoPoints: Story = {
+  args: { stakes: 2 },
 };
-
-export const SixPoints = Template.bind({});
-SixPoints.args = {
-  stakes: 6,
+export const FourPoints: Story = {
+  args: { stakes: 4 },
+};
+export const EightPoints: Story = {
+  args: { stakes: 8 },
+};
+export const TwelvePoints: Story = {
+  args: { stakes: 12 },
 };
