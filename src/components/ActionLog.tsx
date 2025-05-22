@@ -20,14 +20,20 @@ function renderAction(action: ActionLogEntry): string {
 }
 
 const ActionLog: React.FC<ActionLogProps> = ({ actions }) => {
+  // Show only the last 10 actions, latest first
+  const visibleActions = [...actions].slice(-10).reverse();
   return (
     <div className={styles.actionLog}>
       <h3 className={styles.title}>Action Log</h3>
-      <ul className={styles.list}>
-        {actions.map((action, idx) => (
-          <li key={idx} className={styles.item}>{renderAction(action)}</li>
-        ))}
-      </ul>
+      {visibleActions.length === 0 ? (
+        <div className={styles.empty}>No actions yet.</div>
+      ) : (
+        <ul className={styles.list}>
+          {visibleActions.map((action, idx) => (
+            <li key={idx} className={styles.item}>{renderAction(action)}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
