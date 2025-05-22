@@ -3,6 +3,7 @@ import PlayerHand from '../components/PlayerHand';
 import StakesDisplay from '../components/StakesDisplay';
 import ActionLog from '../components/ActionLog';
 import ButtonElements from '../components/ButtonElements';
+import CardPlayArea from '../components/CardPlayArea';
 import { usePlayerHand } from '../services/playerHandProvider';
 import { getMockGameActions, getMockHandResults } from '../services/mockGameActions';
 import type { ActionLogEntry } from '../services/mockGameActions';
@@ -14,6 +15,14 @@ const Game: React.FC = () => {
   // Use mock actions for now
   const [actions, setActions] = useState<ActionLogEntry[]>(getMockGameActions());
   const handResults = getMockHandResults();
+
+  // Example playedCards state for demonstration
+  const playedCards = [
+    { playerName: 'You', card: { value: '4', suit: 'Clubs' } },
+    { playerName: 'AI 1', card: null },
+    { playerName: 'Partner', card: { value: '7', suit: 'Hearts' } },
+    { playerName: 'AI 2', card: null },
+  ];
 
   // State for button logic
   const [isTrucoCalled, setIsTrucoCalled] = useState(false);
@@ -60,6 +69,7 @@ const Game: React.FC = () => {
       <h2>Game Page</h2>
       <ActionLog actions={actions} />
       <StakesDisplay stakes={stakes} />
+      <CardPlayArea playedCards={playedCards} />
       <ButtonElements
         onTruco={onTruco}
         onRaise={onRaise}
