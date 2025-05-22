@@ -4,6 +4,11 @@ import Card from '../components/Card';
 const meta: Meta<typeof Card> = {
   title: 'Components/Card',
   component: Card,
+  argTypes: {
+    value: { control: 'text' },
+    suit: { control: 'text' },
+    highlight: { control: 'boolean' },
+  },
 };
 export default meta;
 
@@ -21,6 +26,30 @@ export const Highlighted: Story = {
   args: {
     value: '7',
     suit: '♥',
+    highlight: true,
+  },
+};
+
+export const KingOfDiamonds: Story = {
+  args: {
+    value: 'K',
+    suit: '♦',
+    highlight: false,
+  },
+};
+
+export const QueenOfClubs: Story = {
+  args: {
+    value: 'Q',
+    suit: '♣',
+    highlight: false,
+  },
+};
+
+export const HighlightedAceOfSpades: Story = {
+  args: {
+    value: 'A',
+    suit: '♠',
     highlight: true,
   },
 };
