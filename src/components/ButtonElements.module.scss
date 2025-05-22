@@ -1,0 +1,46 @@
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.truco, .raise, .fold {
+  padding: 8px 18px;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.truco {
+  background: #ffe066;
+  color: #7a5c00;
+  border: 2px solid #c9a227;
+}
+.truco:hover:not(:disabled) {
+  background: #fff3bf;
+}
+
+.raise {
+  background: #ffd166;
+  color: #7a5c00;
+  border: 2px solid #c9a227;
+}
+.raise:disabled {
+  background: #f4f4f4;
+  color: #bbb;
+  border: 2px solid #eee;
+  cursor: not-allowed;
+}
+
+.fold {
+  background: #ff6b6b;
+  color: #fff;
+  border: 2px solid #c92a2a;
+}
+.fold:hover:not(:disabled) {
+  background: #ffa8a8;
+  color: #7a2222;
+}

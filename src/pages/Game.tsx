@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PlayerHand from '../components/PlayerHand';
 import StakesDisplay from '../components/StakesDisplay';
 import ActionLog from '../components/ActionLog';
+import ButtonElements from '../components/ButtonElements';
 import { usePlayerHand } from '../services/playerHandProvider';
 import { getMockGameActions, getMockHandResults } from '../services/mockGameActions';
 import type { ActionLogEntry } from '../services/mockGameActions';
@@ -14,6 +15,12 @@ const Game: React.FC = () => {
   const [actions, setActions] = useState<ActionLogEntry[]>(getMockGameActions());
   const handResults = getMockHandResults();
 
+  // State for button logic
+  const [isTrucoCalled, setIsTrucoCalled] = useState(false);
+  // For now, raise is always enabled when Truco is called and stakes < 12
+  const isRaiseEnabled = isTrucoCalled && stakes < 12;
+  const [isRaiseDisabledForPlayer, setIsRaiseDisabledForPlayer] = useState(false); // Placeholder for team logic
+
   const onTruco = () => {
     setStakes((prev) => {
       if (prev < 4) return 4;
@@ -24,6 +31,28 @@ const Game: React.FC = () => {
       ...prev,
       { type: 'button-pressed', player: 'Player', action: 'truco' }
     ]);
+    setIsTrucoCalled(true);
+  };
+
+  const onRaise = () => {
+    setStakes((prev) => (prev < 12 ? Math.min(prev + 4, 12) : prev));
+    setActions((prev) => [
+      ...prev,
+      { type: 'button-pressed', player: 'Player', action: 'raise' }
+    ]);
+    // Optionally disable further raises for player
+    setIsRaiseDisabledForPlayer(true);
+  };
+
+  const onFold = () => {
+    setActions((prev) => [
+      ...prev,
+      { type: 'button-pressed', player: 'Player', action: 'fold' }
+    ]);
+    // Reset round state for demonstration
+    setIsTrucoCalled(false);
+    setIsRaiseDisabledForPlayer(false);
+    setStakes(2);
   };
 
   return (
@@ -31,7 +60,14 @@ const Game: React.FC = () => {
       <h2>Game Page</h2>
       <ActionLog actions={actions} />
       <StakesDisplay stakes={stakes} />
-      <button onClick={onTruco} style={{ marginBottom: 16 }}>Truco!</button>
+      <ButtonElements
+        onTruco={onTruco}
+        onRaise={onRaise}
+        onFold={onFold}
+        isTrucoCalled={isTrucoCalled}
+        isRaiseEnabled={isRaiseEnabled}
+        isRaiseDisabledForPlayer={isRaiseDisabledForPlayer}
+      />
       <p>Here we will play Truco against the AI.</p>
       <PlayerHand initialCards={initialCards} />
       {/* Display hand winners for demonstration */}
