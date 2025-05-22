@@ -21,7 +21,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ initialCards }) => {
     <div className="player-hand">
       {cards.map((card, index) => (
         <div key={index} onClick={() => playCard(index)}>
-          <Card suit={card.suit} value={card.value} />
+          <Card value={card.value} suit={card.suit} />
         </div>
       ))}
     </div>

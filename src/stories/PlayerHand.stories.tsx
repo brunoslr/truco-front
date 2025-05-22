@@ -1,19 +1,19 @@
-import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import PlayerHand from '../components/PlayerHand';
+import { getMockPlayerHand } from '../services/mockBackend';
 
-export default {
-  title: 'PlayerHand',
+const meta: Meta<typeof PlayerHand> = {
+  title: 'Components/PlayerHand',
   component: PlayerHand,
-} as ComponentMeta<typeof PlayerHand>;
+};
+export default meta;
 
-const Template: ComponentStory<typeof PlayerHand> = (args) => <PlayerHand {...args} />;
+type Story = StoryObj<typeof meta>;
 
-export const DefaultHand = Template.bind({});
-DefaultHand.args = {
-  initialCards: [
-    { suit: 'hearts', value: 'A' },
-    { suit: 'spades', value: 'K' },
-    { suit: 'diamonds', value: 'Q' },
-  ],
+const mockCards = getMockPlayerHand().map(card => ({ value: card.rank, suit: card.suit }));
+
+export const Default: Story = {
+  args: {
+    initialCards: mockCards,
+  },
 };
