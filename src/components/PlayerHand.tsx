@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import Card from './Card';
 
+interface CardProps {
+  suit: string;
+  value: string;
+}
+
 interface PlayerHandProps {
-  initialCards: { suit: string; value: string }[];
+  initialCards: CardProps[];
 }
 
 const PlayerHand: React.FC<PlayerHandProps> = ({ initialCards }) => {
-  const [cards, setCards] = useState(initialCards);
+  const [cards, setCards] = useState<CardProps[]>(initialCards);
 
   const playCard = (index: number) => {
-    setCards(cards.filter((_, i) => i !== index));
+    setCards((prevCards) => prevCards.filter((_, i) => i !== index));
   };
 
   return (
