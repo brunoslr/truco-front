@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import PlayerHand from '../components/PlayerHand';
-import StakesDisplay from '../components/StakesDisplay';
-import ActionLog from '../components/ActionLog';
-import ButtonElements from '../components/ButtonElements';
-import CardPlayArea from '../components/CardPlayArea';
+import GameRound from '../components/GameRound';
 import { usePlayerHand } from '../services/playerHandProvider';
-import { getMockGameActions, getMockHandResults } from '../services/mockGameActions';
+import { getMockGameActions } from '../services/mockGameActions';
 import type { ActionLogEntry } from '../services/mockGameActions';
 
 const Game: React.FC = () => {
@@ -14,21 +10,27 @@ const Game: React.FC = () => {
   const [stakes, setStakes] = useState(2);
   // Use mock actions for now
   const [actions, setActions] = useState<ActionLogEntry[]>(getMockGameActions());
-  const handResults = getMockHandResults();
 
-  // Example playedCards state for demonstration
+  // Demo data for GameRound integration
+  const players = [
+    { name: 'You', team: 'blue' as const, hand: initialCards, isDealer: false },
+    { name: 'AI 1', team: 'red' as const, hand: [], isDealer: false },
+    { name: 'Partner', team: 'blue' as const, hand: [], isDealer: true },
+    { name: 'AI 2', team: 'red' as const, hand: [], isDealer: false },
+  ];
   const playedCards = [
     { playerName: 'You', card: { value: '4', suit: 'Clubs' } },
     { playerName: 'AI 1', card: null },
     { playerName: 'Partner', card: { value: '7', suit: 'Hearts' } },
     { playerName: 'AI 2', card: null },
   ];
+  const teamScores = { blue: 6, red: 4 };
+  const currentHand = 1;
 
   // State for button logic
   const [isTrucoCalled, setIsTrucoCalled] = useState(false);
   // For now, raise is always enabled when Truco is called and stakes < 12
   const isRaiseEnabled = isTrucoCalled && stakes < 12;
-  const [isRaiseDisabledForPlayer, setIsRaiseDisabledForPlayer] = useState(false); // Placeholder for team logic
 
   const onTruco = () => {
     setStakes((prev) => {
@@ -49,8 +51,6 @@ const Game: React.FC = () => {
       ...prev,
       { type: 'button-pressed', player: 'Player', action: 'raise' }
     ]);
-    // Optionally disable further raises for player
-    setIsRaiseDisabledForPlayer(true);
   };
 
   const onFold = () => {
@@ -60,27 +60,38 @@ const Game: React.FC = () => {
     ]);
     // Reset round state for demonstration
     setIsTrucoCalled(false);
-    setIsRaiseDisabledForPlayer(false);
     setStakes(2);
   };
 
   return (
     <div style={{ padding: 20 }}>
       <h2>Game Page</h2>
+      <GameRound
+        players={players}
+        playedCards={playedCards}
+        stakes={stakes}
+        actions={actions}
+        onTruco={onTruco}
+        onRaise={onRaise}
+        onFold={onFold}
+        isTrucoCalled={isTrucoCalled}
+        isRaiseEnabled={isRaiseEnabled}
+        currentHand={currentHand}
+        teamScores={teamScores}
+      />
+      {/* Old UI below for reference, can be removed after validation */}
+      {/* 
       <ActionLog actions={actions} />
       <StakesDisplay stakes={stakes} />
-      <CardPlayArea playedCards={playedCards} />
       <ButtonElements
         onTruco={onTruco}
         onRaise={onRaise}
         onFold={onFold}
         isTrucoCalled={isTrucoCalled}
         isRaiseEnabled={isRaiseEnabled}
-        isRaiseDisabledForPlayer={isRaiseDisabledForPlayer}
       />
       <p>Here we will play Truco against the AI.</p>
       <PlayerHand initialCards={initialCards} />
-      {/* Display hand winners for demonstration */}
       <div style={{ marginTop: 16 }}>
         <strong>Previous Hands:</strong>
         <ul>
@@ -89,6 +100,7 @@ const Game: React.FC = () => {
           ))}
         </ul>
       </div>
+      */}
     </div>
   );
 };

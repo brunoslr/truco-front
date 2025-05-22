@@ -24,9 +24,9 @@ describe('CardPlayArea', () => {
       { playerName: 'Partner', card: { value: '7', suit: 'Hearts' } },
       { playerName: 'AI 2', card: null },
     ];
-    const { getByText } = render(<CardPlayArea playedCards={playedCards} />);
+    const { getByText, getAllByText } = render(<CardPlayArea playedCards={playedCards} />);
     expect(getByText('4')).toBeInTheDocument();
     expect(getByText('7')).toBeInTheDocument();
-    expect(getByText('Empty')).toBeInTheDocument();
+    expect(getAllByText('Empty').length).toBe(2);
   });
 });

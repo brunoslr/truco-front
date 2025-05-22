@@ -1,0 +1,85 @@
+.gameRoundContainer {
+  position: relative;
+  width: 100%;
+  min-height: 700px;
+  background: #fffbe6;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(201, 162, 39, 0.10);
+  padding: 32px 0 16px 0;
+  margin: 0 auto;
+}
+
+.scoreTopLeft {
+  position: absolute;
+  top: 12px;
+  left: 24px;
+  font-size: 1.2rem;
+  color: #4f8cff;
+  font-weight: bold;
+}
+.scoreTopRight {
+  position: absolute;
+  top: 12px;
+  right: 24px;
+  font-size: 1.2rem;
+  color: #ff4f4f;
+  font-weight: bold;
+}
+.handInfo {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #b48a00;
+  margin-bottom: 12px;
+}
+.squareLayout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.topPlayer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.middleRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.leftPlayer, .rightPlayer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 180px;
+}
+.centerArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 24px;
+}
+.bottomPlayer {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+.dealerBadge {
+  margin-top: 4px;
+  background: #ffe066;
+  color: #7a5c00;
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  border: 1px solid #c9a227;
+}
+.actionLogArea {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
