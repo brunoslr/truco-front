@@ -17,17 +17,64 @@ This project is a single-player web implementation of Truco Mineiro, built using
 
 ## Rules of Truco Mineiro
 
-- The game uses a 40-card deck (8s, 9s, and 10s removed).
-- The card ranking is as follows:
-  - 4 of Clubs (Zap)
-  - 7 of Hearts (Copas)
-  - Ace of Spades (Espadão)
-  - 7 of Diamonds (Espadinha)
-  - 3s, 2s, Aces, Kings, Jacks, Queens, 7 of Spades, 7 of Clubs, 6s, 5s, 4s
-- A regular hand is worth 2 points.
-- A hand with Truco is worth 4 points, with increments of 4 points if raised.
+### Players and Teams
+Truco Mineiro is typically played with two or four players divided into two teams of one or two players each.
+
+### Deck
+- The game uses a 40-card deck (standard deck with 8s, 9s, and 10s removed).
+
+### Card Ranking (Highest to Lowest)
+1. 4 of Clubs (Zap)
+2. 7 of Hearts (Copas)
+3. Ace of Spades (Espadão)
+4. 7 of Diamonds (Espadinha)
+5. 3s, 2s, Aces, Kings, Jacks, Queens, 7 of Spades, 7 of Clubs, 6s, 5s, 4s
+
+### Objective
+The objective is to win rounds (hands) and accumulate points. The first team to reach 12 points wins the game.
+
+---
+
+### Turn Structure
+
+#### Dealing Cards
+- At the beginning of each hand, the dealer shuffles the deck and deals three cards to each player.
+- The dealer rotates clockwise after each hand.
+
+#### Playing Cards
+- Players take turns playing one card each, starting with the player to the left of the dealer.
+- Each player plays one card face-up in the center of the table.
+
+#### Winning Rounds
+- The highest-ranked card wins the round.
+- The team that wins two out of three rounds wins the hand.
+
+#### Handling Draws
+- **Draw in the first round:** All players may show their highest card. The player with the highest card wins the hand. Players can choose to play or fold in this case.
+- **Draw in the second or third rounds:** The team that won the first round wins the hand.
+
+---
+
+### Truco Call
+- At any point during the hand, a player can call "Truco" to raise the stakes.
+- The opposing team can accept, raise further, or fold.
+- If accepted, the points at stake increase by increments of 4 points.
+
+---
+
+### Scoring
+- **Winning a hand without Truco:** 2 points
+- **Winning a hand with Truco:** 4 points (or more if raised by increments of 4)
+
+---
+
+### Winning the Game
 - The first team to reach 12 points wins the game.
-- The game does not include Envido or Flor.
+
+---
+
+### Exclusions
+- The game does not include Envido or Flor, as they are not used in the Truco Mineiro variant.
 
 ## Using the Mock Backend
 
