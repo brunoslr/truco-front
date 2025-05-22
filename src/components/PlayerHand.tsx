@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Card from './Card';
-import styles from './Card.module.scss';
 
 interface CardProps {
   suit: string;
@@ -21,9 +20,9 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ initialCards, direction = 'hori
   };
 
   return (
-    <div className={direction === 'vertical' ? styles['player-hand-vertical'] : styles['player-hand-horizontal']}>
+    <div className={`flex ${direction === 'vertical' ? 'flex-col' : 'flex-row'} space-x-2`}>
       {cards.map((card, index) => (
-        <div key={index} onClick={() => playCard(index)}>
+        <div key={index} onClick={() => playCard(index)} className="cursor-pointer">
           <Card value={card.value} suit={card.suit} faceUp={faceUp} />
         </div>
       ))}
