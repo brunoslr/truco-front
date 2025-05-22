@@ -6,13 +6,22 @@ interface CardProps {
   value: string;
   suit: string;
   highlight?: boolean;
+  faceUp?: boolean;
 }
 
-const Card: React.FC<CardProps> = ({ value, suit, highlight = false }) => {
+const Card: React.FC<CardProps> = ({ value, suit, highlight = false, faceUp = true }) => {
   return (
     <div className={classNames(styles.card, { [styles.highlight]: highlight })}>
-      <div className={styles.value}>{value}</div>
-      <div className={styles.suit}>{suit}</div>
+      {faceUp ? (
+        <>
+          <div className={styles.value}>{value}</div>
+          <div className={styles.suit}>{suit}</div>
+        </>
+      ) : (
+        <div className={styles.cardBack}>
+          <span role="img" aria-label="card back" className={styles.cardBackIcon}>🂠</span>
+        </div>
+      )}
     </div>
   );
 };
