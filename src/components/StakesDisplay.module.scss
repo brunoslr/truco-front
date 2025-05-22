@@ -1,0 +1,22 @@
+.stakesDisplay {
+  display: flex;
+  align-items: center;
+  background: #f8f8e8;
+  border: 2px solid #c9a227;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #7a5c00;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(201, 162, 39, 0.08);
+}
+
+.label {
+  margin-right: 8px;
+  color: #b48a00;
+}
+
+.value {
+  color: #c9a227;
+}
