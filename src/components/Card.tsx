@@ -5,10 +5,10 @@ import styles from './Card.module.scss';
 interface CardProps {
   value: string;
   suit: string;
-  highlight: boolean;
+  highlight?: boolean;
 }
 
-const Card: React.FC<CardProps> = ({ value, suit, highlight }) => {
+const Card: React.FC<CardProps> = ({ value, suit, highlight = false }) => {
   return (
     <div className={classNames(styles.card, { [styles.highlight]: highlight })}>
       <div className={styles.value}>{value}</div>
