@@ -4,16 +4,22 @@ export interface HandResult {
   winner: string; // e.g., 'Player', 'AI', 'Team 1', etc.
 }
 
-export function getMockGameActions(): string[] {
+export type ActionLogEntry =
+  | { type: 'card-played'; player: string; card: string }
+  | { type: 'button-pressed'; player: string; action: 'truco' | 'raise' | 'fold' }
+  | { type: 'hand-result'; handNumber: number; winner: string };
+
+export function getMockGameActions(): ActionLogEntry[] {
   return [
-    'Player played 4 of Clubs',
-    'AI played 7 of Hearts',
-    'Player called Truco',
-    'AI accepted Truco',
-    'Player won the hand',
-    'AI played 3 of Clubs',
-    'Player played 7 of Diamonds',
-    'AI won the hand',
+    { type: 'card-played', player: 'Player', card: '4 of Clubs' },
+    { type: 'card-played', player: 'AI', card: '7 of Hearts' },
+    { type: 'button-pressed', player: 'Player', action: 'truco' },
+    { type: 'button-pressed', player: 'AI', action: 'raise' },
+    { type: 'button-pressed', player: 'Player', action: 'fold' },
+    { type: 'hand-result', handNumber: 1, winner: 'Player' },
+    { type: 'card-played', player: 'AI', card: '3 of Clubs' },
+    { type: 'card-played', player: 'Player', card: '7 of Diamonds' },
+    { type: 'hand-result', handNumber: 2, winner: 'AI' },
   ];
 }
 
