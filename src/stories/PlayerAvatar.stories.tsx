@@ -18,7 +18,7 @@ type Story = StoryObj<typeof meta>;
 export const FriendlyTeam: Story = {
   args: {
     playerName: 'You',
-    teamIndicator: 'blue',
+    teamIndicator: "Player's Team",
     hand: mockHand,
     onTruco: () => alert('Truco!'),
     onRaise: () => alert('Raise!'),
@@ -31,7 +31,7 @@ export const FriendlyTeam: Story = {
 export const AdversaryTeam: Story = {
   args: {
     playerName: 'Opponent',
-    teamIndicator: 'red',
+    teamIndicator: 'Opponent Team',
     hand: mockHand,
     onTruco: () => alert('Truco!'),
     onRaise: () => alert('Raise!'),

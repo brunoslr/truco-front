@@ -13,10 +13,10 @@ const Game: React.FC = () => {
 
   // Demo data for GameRound integration
   const players = [
-    { name: 'You', team: 'blue' as const, hand: initialCards, isDealer: false },
-    { name: 'AI 1', team: 'red' as const, hand: [], isDealer: false },
-    { name: 'Partner', team: 'blue' as const, hand: [], isDealer: true },
-    { name: 'AI 2', team: 'red' as const, hand: [], isDealer: false },
+    { name: 'You', team: "Player's Team" as const, hand: initialCards, isDealer: true },
+    { name: 'AI 1', team: 'Opponent Team' as const, hand: [], isDealer: false },
+    { name: 'Partner', team: "Player's Team" as const, hand: [], isDealer: true },
+    { name: 'AI 2', team: 'Opponent Team' as const, hand: [], isDealer: false },
   ];
   const playedCards = [
     { playerName: 'You', card: { value: '4', suit: 'Clubs' } },
@@ -24,7 +24,7 @@ const Game: React.FC = () => {
     { playerName: 'Partner', card: { value: '7', suit: 'Hearts' } },
     { playerName: 'AI 2', card: null },
   ];
-  const teamScores = { blue: 6, red: 4 };
+  const teamScores = { "Player's Team": 6, 'Opponent Team': 4 };
   const currentHand = 1;
 
   // State for button logic

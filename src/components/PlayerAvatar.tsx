@@ -10,7 +10,7 @@ interface CardProps {
 
 interface PlayerAvatarProps {
   playerName: string;
-  teamIndicator: 'blue' | 'red';
+  teamIndicator: "Player's Team" | "Opponent Team";
   hand: CardProps[];
   onTruco: () => void;
   onRaise: () => void;
@@ -33,7 +33,7 @@ const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
 }) => {
   return (
     <div className={styles.avatarContainer}>
-      <div className={styles.teamIndicator} data-team={teamIndicator} />
+      <div className={styles.teamIndicator} data-team={teamIndicator === "Player's Team" ? 'blue' : 'red'} />
       <div className={styles.playerName}>{playerName}</div>
       <div className={styles.handWrapper}>
         <PlayerHand initialCards={hand} />

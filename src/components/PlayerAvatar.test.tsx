@@ -13,7 +13,7 @@ describe('PlayerAvatar', () => {
     const { getByText } = render(
       <PlayerAvatar
         playerName="Test Player"
-        teamIndicator="blue"
+        teamIndicator="Player's Team"
         hand={hand}
         onTruco={jest.fn()}
         onRaise={jest.fn()}
@@ -35,7 +35,7 @@ describe('PlayerAvatar', () => {
     const { getByText, rerender } = render(
       <PlayerAvatar
         playerName="Test Player"
-        teamIndicator="blue"
+        teamIndicator="Player's Team"
         hand={hand}
         onTruco={onTruco}
         onRaise={onRaise}
@@ -50,7 +50,7 @@ describe('PlayerAvatar', () => {
     rerender(
       <PlayerAvatar
         playerName="Test Player"
-        teamIndicator="blue"
+        teamIndicator="Player's Team"
         hand={hand}
         onTruco={onTruco}
         onRaise={onRaise}
