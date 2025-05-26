@@ -4,22 +4,22 @@ import GameRound from './GameRound';
 
 describe('GameRound', () => {
   const players = [
-    { name: 'You', team: 'blue', hand: [
+    { name: 'You', team: "Player's Team" as const, hand: [
       { value: '4', suit: 'Clubs' },
       { value: '7', suit: 'Hearts' },
       { value: '3', suit: 'Clubs' },
     ], isDealer: false },
-    { name: 'AI 1', team: 'red', hand: [
+    { name: 'AI 1', team: 'Opponent Team' as const, hand: [
       { value: 'A', suit: 'Spades' },
       { value: 'K', suit: 'Hearts' },
       { value: '2', suit: 'Diamonds' },
     ], isDealer: false },
-    { name: 'Partner', team: 'blue', hand: [
+    { name: 'Partner', team: "Player's Team" as const, hand: [
       { value: '5', suit: 'Clubs' },
       { value: '6', suit: 'Hearts' },
       { value: 'Q', suit: 'Spades' },
     ], isDealer: true },
-    { name: 'AI 2', team: 'red', hand: [
+    { name: 'AI 2', team: 'Opponent Team' as const, hand: [
       { value: 'J', suit: 'Clubs' },
       { value: '9', suit: 'Hearts' },
       { value: '8', suit: 'Diamonds' },
@@ -38,7 +38,7 @@ describe('GameRound', () => {
   ];
 
   it('renders all player avatars, card play area, stakes, and action log', () => {
-    const { getByText } = render(
+    const { getAllByText, queryAllByText, getByText } = render(
       <GameRound
         players={players}
         playedCards={playedCards}
@@ -50,18 +50,19 @@ describe('GameRound', () => {
         isTrucoCalled={true}
         isRaiseEnabled={true}
         currentHand={1}
-        teamScores={{ blue: 6, red: 4 }}
+        teamScores={{ "Player's Team": 6, 'Opponent Team': 4 }}
       />
     );
-    expect(getByText('You')).toBeInTheDocument();
-    expect(getByText('AI 1')).toBeInTheDocument();
-    expect(getByText('Partner')).toBeInTheDocument();
-    expect(getByText('AI 2')).toBeInTheDocument();
+    // There are multiple 'You' labels (avatar and play area), so use getAllByText and check length
+    expect(getAllByText('You').length).toBeGreaterThanOrEqual(1);
+    expect(queryAllByText('AI 1').length).toBeGreaterThanOrEqual(1);
+    expect(queryAllByText('Partner').length).toBeGreaterThanOrEqual(1);
+    expect(queryAllByText('AI 2').length).toBeGreaterThanOrEqual(1);
     expect(getByText('Stakes:')).toBeInTheDocument();
     expect(getByText('Action Log')).toBeInTheDocument();
     expect(getByText('Hand 1')).toBeInTheDocument();
-    expect(getByText('Blue: 6')).toBeInTheDocument();
-    expect(getByText('Red: 4')).toBeInTheDocument();
+    expect(getByText("Player's Team: 6")).toBeInTheDocument();
+    expect(getByText('Opponent Team: 4')).toBeInTheDocument();
     expect(getByText('Dealer')).toBeInTheDocument();
   });
 });

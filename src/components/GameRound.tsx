@@ -12,7 +12,7 @@ interface Card {
 
 interface Player {
   name: string;
-  team: 'blue' | 'red';
+  team: "Player's Team" | "Opponent Team";
   hand: Card[];
   isDealer: boolean;
 }
@@ -33,7 +33,7 @@ interface GameRoundProps {
   isTrucoCalled: boolean;
   isRaiseEnabled: boolean;
   currentHand: number;
-  teamScores: { blue: number; red: number };
+  teamScores: { "Player's Team": number; "Opponent Team": number };
 }
 
 const GameRound: React.FC<GameRoundProps> = ({
@@ -53,15 +53,18 @@ const GameRound: React.FC<GameRoundProps> = ({
   return (
     <div className={styles.gameRoundContainer}>
       {/* Team scores */}
-      <div className={styles.scoreTopLeft}>Blue: {teamScores.blue}</div>
-      <div className={styles.scoreTopRight}>Red: {teamScores.red}</div>
+      <div className={styles.scoreTopLeft}>{`Player's Team: ${teamScores["Player's Team"]}`}</div>
+      <div className={styles.scoreTopRight}>{`Opponent Team: ${teamScores["Opponent Team"]}`}</div>
       {/* Hand and dealer info */}
       <div className={styles.handInfo}>Hand {currentHand}</div>
       {/* Main layout: square formation */}
       <div className={styles.squareLayout}>
         {/* Top player */}
         <div className={styles.topPlayer}>
-          <PlayerAvatar {...players[2]}
+          <PlayerAvatar
+            playerName={players[2].name}
+            teamIndicator={players[2].team}
+            hand={players[2].hand}
             onTruco={onTruco}
             onRaise={onRaise}
             onFold={onFold}
@@ -73,7 +76,10 @@ const GameRound: React.FC<GameRoundProps> = ({
         {/* Left and right players with center area */}
         <div className={styles.middleRow}>
           <div className={styles.leftPlayer}>
-            <PlayerAvatar {...players[1]}
+            <PlayerAvatar
+              playerName={players[1].name}
+              teamIndicator={players[1].team}
+              hand={players[1].hand}
               onTruco={onTruco}
               onRaise={onRaise}
               onFold={onFold}
@@ -87,7 +93,10 @@ const GameRound: React.FC<GameRoundProps> = ({
             <CardPlayArea playedCards={playedCards} />
           </div>
           <div className={styles.rightPlayer}>
-            <PlayerAvatar {...players[3]}
+            <PlayerAvatar
+              playerName={players[3].name}
+              teamIndicator={players[3].team}
+              hand={players[3].hand}
               onTruco={onTruco}
               onRaise={onRaise}
               onFold={onFold}
@@ -99,7 +108,10 @@ const GameRound: React.FC<GameRoundProps> = ({
         </div>
         {/* Bottom player (You) */}
         <div className={styles.bottomPlayer}>
-          <PlayerAvatar {...players[0]}
+          <PlayerAvatar
+            playerName={players[0].name}
+            teamIndicator={players[0].team}
+            hand={players[0].hand}
             onTruco={onTruco}
             onRaise={onRaise}
             onFold={onFold}

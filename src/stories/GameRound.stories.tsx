@@ -2,22 +2,22 @@ import type { Meta, StoryObj } from '@storybook/react';
 import GameRound from '../components/GameRound';
 
 const players = [
-  { name: 'You', team: 'blue', hand: [
+  { name: 'You', team: "Player's Team", hand: [
     { value: '4', suit: 'Clubs' },
     { value: '7', suit: 'Hearts' },
     { value: '3', suit: 'Clubs' },
   ], isDealer: false },
-  { name: 'AI 1', team: 'red', hand: [
+  { name: 'AI 1', team: 'Opponent Team', hand: [
     { value: 'A', suit: 'Spades' },
     { value: 'K', suit: 'Hearts' },
     { value: '2', suit: 'Diamonds' },
   ], isDealer: false },
-  { name: 'Partner', team: 'blue', hand: [
+  { name: 'Partner', team: "Player's Team", hand: [
     { value: '5', suit: 'Clubs' },
     { value: '6', suit: 'Hearts' },
     { value: 'Q', suit: 'Spades' },
   ], isDealer: true },
-  { name: 'AI 2', team: 'red', hand: [
+  { name: 'AI 2', team: 'Opponent Team', hand: [
     { value: 'J', suit: 'Clubs' },
     { value: '9', suit: 'Hearts' },
     { value: '8', suit: 'Diamonds' },
@@ -57,6 +57,6 @@ export const Default: Story = {
     isTrucoCalled: true,
     isRaiseEnabled: true,
     currentHand: 1,
-    teamScores: { blue: 6, red: 4 },
+    teamScores: { "Player's Team": 6, 'Opponent Team': 4 },
   },
 };
