@@ -9,6 +9,13 @@
   margin: 12px;
   min-width: 220px;
   position: relative;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+
+.active {
+  box-shadow: 0 0 0 4px #ffe066, 0 2px 8px rgba(0,0,0,0.12);
+  border: 2px solid #ffe066;
+  z-index: 2;
 }
 
 .teamIndicator {

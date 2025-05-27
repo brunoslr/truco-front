@@ -18,7 +18,7 @@ const CardPlayArea: React.FC<CardPlayAreaProps> = ({ playedCards }) => {
         <div key={idx} className={styles.cardSlot}>
           <div className={styles.playerLabel}>{slot.playerName}</div>
           {slot.card ? (
-            <Card value={slot.card.value} suit={slot.card.suit} />
+            <Card value={slot.card.value} suit={slot.card.suit} faceUp={true} />
           ) : (
             <div className={styles.emptySlot}>Empty</div>
           )}
