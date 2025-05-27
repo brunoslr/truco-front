@@ -9,10 +9,10 @@ describe('PlayerAvatar', () => {
     { value: '3', suit: 'Clubs' },
   ];
 
-  it('renders player name, team indicator, and hand', () => {
+  it('renders player name, team indicator, and hand (face up for player)', () => {
     const { getByText } = render(
       <PlayerAvatar
-        playerName="Test Player"
+        playerName="You"
         teamIndicator="Player's Team"
         hand={hand}
         onTruco={jest.fn()}
@@ -22,10 +22,31 @@ describe('PlayerAvatar', () => {
         isRaiseEnabled={true}
       />
     );
-    expect(getByText('Test Player')).toBeInTheDocument();
+    expect(getByText('You')).toBeInTheDocument();
     expect(getByText('4')).toBeInTheDocument();
     expect(getByText('7')).toBeInTheDocument();
     expect(getByText('Hearts')).toBeInTheDocument();
+  });
+
+  it('renders cardbacks for non-player hands', () => {
+    const { getAllByLabelText, queryByText } = render(
+      <PlayerAvatar
+        playerName="AI 1"
+        teamIndicator="Opponent Team"
+        hand={hand}
+        onTruco={jest.fn()}
+        onRaise={jest.fn()}
+        onFold={jest.fn()}
+        isTrucoCalled={false}
+        isRaiseEnabled={true}
+      />
+    );
+    // Should render 3 cardbacks
+    expect(getAllByLabelText('card back').length).toBe(3);
+    // Should NOT render card values or suits
+    expect(queryByText('4')).not.toBeInTheDocument();
+    expect(queryByText('7')).not.toBeInTheDocument();
+    expect(queryByText('Hearts')).not.toBeInTheDocument();
   });
 
   it('calls onTruco, onRaise, and onFold when buttons are clicked', () => {
@@ -34,7 +55,7 @@ describe('PlayerAvatar', () => {
     const onFold = jest.fn();
     const { getByText, rerender } = render(
       <PlayerAvatar
-        playerName="Test Player"
+        playerName="You"
         teamIndicator="Player's Team"
         hand={hand}
         onTruco={onTruco}
@@ -49,7 +70,7 @@ describe('PlayerAvatar', () => {
 
     rerender(
       <PlayerAvatar
-        playerName="Test Player"
+        playerName="You"
         teamIndicator="Player's Team"
         hand={hand}
         onTruco={onTruco}
