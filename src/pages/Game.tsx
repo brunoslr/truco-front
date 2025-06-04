@@ -54,6 +54,24 @@ const Game: React.FC = () => {
   const [turnNumber, setTurnNumber] = useState(1);
   const [handOver, setHandOver] = useState(false);
 
+  // Simulate sending play-card payload to backend (log for demo)
+  const sendPlayCardPayload = (playerId: string, card?: { value: string; suit: string } | null) => {
+    let payload;
+    if (card === undefined) {
+      // AI move: only playerId
+      payload = { playerId };
+    } else if (card && card.value === '0' && card.suit === '') {
+      // Fold
+      payload = { playerId, card: { value: 0, suit: "" } };
+    } else {
+      // Human play
+      payload = { playerId, card };
+    }
+    // For now, just log the payload (replace with real API call in production)
+    // eslint-disable-next-line no-console
+    console.log('[MOCK API] POST /api/game/play-card', payload);
+  };
+
   const onTruco = () => {
     setStakes((prev) => {
       if (prev < 4) return 4;
@@ -76,6 +94,7 @@ const Game: React.FC = () => {
   };
 
   const onFold = () => {
+    sendPlayCardPayload('You', { value: '0', suit: '' }); // Fold
     setActions((prev) => [
       ...prev,
       { type: 'button-pressed', player: 'Player', action: 'fold' }
@@ -137,6 +156,7 @@ const Game: React.FC = () => {
     };
     const { seat, card } = getMockAIMove(playedCardsState, aiHands);
     if (!card) return;
+    sendPlayCardPayload(players[seat].name, undefined); // AI move: only playerId
     // Update playedCards for AI
     const newPlayedCards: PlayedCardSlot[] = playedCardsState.map((slot, idx) =>
       idx === seat ? { playerName: slot.playerName, card } : { playerName: slot.playerName, card: slot.card }
@@ -178,6 +198,7 @@ const Game: React.FC = () => {
     // Only allow if it's the player's turn (activeSeat === 0)
     if (activeSeat !== 0 || !playerHand[cardIdx]) return;
     const card = playerHand[cardIdx];
+    sendPlayCardPayload('You', card); // Human play
     // Remove card from player's hand
     const newHand = playerHand.filter((_, idx) => idx !== cardIdx);
     setPlayerHand(newHand);

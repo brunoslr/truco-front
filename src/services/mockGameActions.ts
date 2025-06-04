@@ -57,3 +57,18 @@ export function getMockTurnWinner(playedCards: { playerName: string; card: { val
   const winnerTeam = Math.random() > 0.5 ? "Player's Team" : "Opponent Team";
   return winnerTeam;
 }
+
+// Simulate backend handler for /api/game/play-card
+// Accepts: { playerId, card } (human/fold), { playerId } (AI)
+export function mockPlayCardEndpoint(payload: { playerId: string; card?: { value: string | number; suit: string } }) {
+  if (payload.card === undefined) {
+    // AI move
+    return { status: 'ok', type: 'ai', playerId: payload.playerId };
+  }
+  if (payload.card.value === 0 && payload.card.suit === "") {
+    // Fold
+    return { status: 'ok', type: 'fold', playerId: payload.playerId };
+  }
+  // Human play
+  return { status: 'ok', type: 'play', playerId: payload.playerId, card: payload.card };
+}

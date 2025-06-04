@@ -142,7 +142,12 @@ This project is designed to work with a backend API that manages game state, pla
 
 #### Example API Endpoints
 - `GET /api/game/state` — Returns the current `GameStateDto`.
-- `POST /api/game/play-card` — Plays a card. Body: `{ playerId, card }`.
+- `POST /api/game/play-card` — Plays a card. Body varies by actor:
+  - **Human:** `{ playerId, card }` (where `card` is a valid `CardDto`)
+  - **AI:** `{ playerId }` (no `card` property, or `card: null`)
+  - **Fold:** `{ playerId, card: { value: 0, suit: "" } }`
+
+  The backend determines the next valid move for AI players if called with only `playerId`. For a fold, send a card object with `value: 0` and `suit: ""`.
 - `POST /api/game/press-button` — Handles "Truco", "Raise", or "Fold" actions. Body: `{ playerId, action }`.
 - `POST /api/game/new-hand` — Starts a new hand.
 
