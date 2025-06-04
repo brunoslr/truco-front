@@ -68,6 +68,16 @@ The objective is to win rounds (hands) and accumulate points. The first team to 
 
 ---
 
+### Special Rule: "Mão de 10"
+
+If either team reaches 10 points, the next hand is automatically worth 4 points (regardless of Truco calls), unless the leading team chooses to forfeit. In this case:
+- The team with 10 points (the leading team) can either:
+  - **Play the hand for 4 points** (normal play, no Truco call needed), or
+  - **Fold before playing any cards**, immediately giving 2 points to the opposing team (the hand is not played).
+- This rule is known as "Mão de 10" in Truco Mineiro.
+
+---
+
 ### Winning the Game
 - The first team to reach 12 points wins the game.
 
@@ -85,6 +95,58 @@ VITE_REACT_APP_USE_MOCK_BACKEND=true
 ```
 
 This will enable the mock backend service that provides placeholder data for the player's hand. Once the actual backend is implemented, you can remove or disable the mock backend by setting the environment variable to `false`.
+
+## API and Data Transfer Objects (DTOs)
+
+This project is designed to work with a backend API that manages game state, player actions, and game history. The following DTOs (Data Transfer Objects) define the contract between frontend and backend:
+
+### PlayerDto
+- `playerId`: string or number (unique identifier)
+- `name`: string (e.g., "You", "AI 1", "Partner", "AI 2")
+- `team`: string (e.g., "Player's Team", "Opponent Team")
+- `hand`: Array of `CardDto` (the player's current hand)
+- `isDealer`: boolean (true if this player is the dealer for the current hand)
+- `isActive`: boolean (true if this player is the current turn)
+- `seat`: number (0-3, for table position)
+- `firstPlayerSeat`: number (seat number of the first player for the hand)
+
+### CardDto
+- `value`: string (e.g., "4", "7", "A", "K")
+- `suit`: string (e.g., "Clubs", "Hearts", "Spades", "Diamonds")
+
+### PlayedCardDto
+- `playerId`: string or number
+- `card`: `CardDto` or null (null if not played yet)
+
+### GameStateDto
+- `players`: Array of `PlayerDto`
+- `playedCards`: Array of `PlayedCardDto` (one per seat)
+- `stakes`: number (current points at stake)
+- `isTrucoCalled`: boolean
+- `isRaiseEnabled`: boolean
+- `currentHand`: number (hand number in the match)
+- `teamScores`: object with team names as keys and numbers as values (e.g., `{ "Player's Team": 6, "Opponent Team": 4 }`)
+- `turnWinner`: string or null (team name or null if undecided)
+- `actionLog`: Array of `ActionLogEntryDto`
+
+### ActionLogEntryDto
+- `type`: string (e.g., "card-played", "button-pressed", "hand-result", "turn-result")
+- `playerId`: string or number (optional, depending on type)
+- `card`: string (optional, for "card-played")
+- `action`: string (optional, for "button-pressed")
+- `handNumber`: number (optional, for "hand-result")
+- `winner`: string (optional, for "hand-result" or "turn-result")
+- `winnerTeam`: string (optional, for "turn-result")
+
+**All DTOs are serialized as JSON and use camelCase for property names.**
+
+#### Example API Endpoints
+- `GET /api/game/state` — Returns the current `GameStateDto`.
+- `POST /api/game/play-card` — Plays a card. Body: `{ playerId, card }`.
+- `POST /api/game/press-button` — Handles "Truco", "Raise", or "Fold" actions. Body: `{ playerId, action }`.
+- `POST /api/game/new-hand` — Starts a new hand.
+
+For more details, see the backend documentation or contact the backend team.
 
 ## Developer Instructions
 
