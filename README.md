@@ -1,3 +1,4 @@
+
 # Truco Mineiro - React Frontend
 
 A modern React-based frontend for the traditional Brazilian card game Truco Mineiro, featuring real-time gameplay integration with a backend API.
