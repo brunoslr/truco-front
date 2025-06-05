@@ -142,13 +142,22 @@ This project is designed to work with a backend API that manages game state, pla
 
 #### Example API Endpoints
 - `GET /api/game/state` — Returns the current `GameStateDto`.
+- `GET /api/game/{gameId}?playerId=...` — Returns the current `GameStateDto`.
+  - `playerId` (query param) is **optional**. If omitted, the backend assumes single-player mode (human + 3 AI) and reveals only the human hand. If provided, only that player's hand is revealed; all other hands are hidden (show only hand size or empty objects). In DEVMODE, all hands may be revealed for debugging.
+
 - `POST /api/game/play-card` — Plays a card. Body varies by actor:
   - **Human:** `{ playerId, card }` (where `card` is a valid `CardDto`)
   - **AI:** `{ playerId }` (no `card` property, or `card: null`)
   - **Fold:** `{ playerId, card: { value: 0, suit: "" } }`
 
   The backend determines the next valid move for AI players if called with only `playerId`. For a fold, send a card object with `value: 0` and `suit: ""`.
+
 - `POST /api/game/press-button` — Handles "Truco", "Raise", or "Fold" actions. Body: `{ playerId, action }`.
+  - **Truco:** Raises the stakes (not allowed if the player's team has 10 points; request is ignored and no state changes). 
+  - **Raise:** Increases the stakes by 4 (up to 12).
+  - **Fold:** The player is treated as playing a card with `{ value: 0, suit: "" }` (face down). If this is the first action after a Truco call by the opposing team, the hand is forfeited and the opposing team receives the current stakes. Otherwise, play continues and the folding player cannot win the round, but their teammate can still win if they play the strongest card.
+  - All actions are logged in the action log. The backend enforces all rules, including the "Mão de 10" restriction and fold/forfeit logic.
+
 - `POST /api/game/new-hand` — Starts a new hand.
 
 For more details, see the backend documentation or contact the backend team.
