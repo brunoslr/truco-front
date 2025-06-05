@@ -32,7 +32,6 @@ const Game: React.FC = () => {
         body: JSON.stringify({ playerName: 'Player' }),
       })
         .then(res => res.json())        .then(data => {
-          console.log('Game start response:', data);
           setGameId(data.gameId);
           setPlayerSeat(data.playerSeat || 0);
           
@@ -78,11 +77,8 @@ const Game: React.FC = () => {
 
     const poll = async () => {
       try {
-        const state = await fetchGameState(gameId, playerSeat);
-        if (!cancelled) {          console.log('Backend response:', state);
-          console.log('Player seat:', playerSeat);
-          console.log('Players from backend:', state.players);
-            // Process players and mark the current player
+        const state = await fetchGameState(gameId, playerSeat);        if (!cancelled) {
+          // Process players and mark the current player
           const processedPlayers = (state.players || []).map((player: any, index: number) => {
             const isCurrentPlayer = player.seat === playerSeat;
             
@@ -111,10 +107,8 @@ const Game: React.FC = () => {
               name: isCurrentPlayer ? 'You' : player.name || `Player ${index + 1}`,
               hand: playerHand,
               seat: player.seat // Make sure seat is preserved
-            };
-          });
+            };          });
           
-          console.log('Processed players:', processedPlayers);
           setPlayers(processedPlayers);
           setPlayedCards(state.playedCards || []);
           setStakes(state.stakes || 2);
@@ -202,12 +196,8 @@ const Game: React.FC = () => {
     
     return arranged;
   };
-
   const arrangedPlayers = arrangePlayersForUI(players, playerSeat);
   
-  console.log('Final arranged players for UI:', arrangedPlayers);
-  console.log('Your player (should be at index 0):', arrangedPlayers[0]);
-
   return (
     <div style={{ padding: 20 }}>
       <h2>Game Page</h2>      <p>Game ID: {gameId}</p>

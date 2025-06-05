@@ -14,15 +14,10 @@ interface PlayerHandProps {
   isActive?: boolean;
 }
 
-const PlayerHand: React.FC<PlayerHandProps> = ({ initialCards, direction = 'horizontal', onPlayCard, isActive }) => {
-  console.log('PlayerHand received cards:', initialCards);
-  
-  return (
+const PlayerHand: React.FC<PlayerHandProps> = ({ initialCards, direction = 'horizontal', onPlayCard, isActive }) => {  return (
     <div className={direction === 'vertical' ? styles['player-hand-vertical'] : styles['player-hand-horizontal']}>      {initialCards.map((card, index) => {
         // If card has value and suit, show it face-up, otherwise show card back
         const shouldShowFaceUp = !!(card.value && card.suit);
-        
-        console.log(`Card ${index}:`, card, 'shouldShowFaceUp:', shouldShowFaceUp);
         
         return (
           <div key={index} onClick={() => onPlayCard && isActive && onPlayCard(index)} style={onPlayCard && isActive ? { cursor: 'pointer' } : {}}>
