@@ -33,11 +33,9 @@ interface GameRoundProps {
   onFold: () => void;
   isTrucoCalled: boolean;
   isRaiseEnabled: boolean;
-  currentHand: number;
-  teamScores: { "Player's Team": number; "Opponent Team": number };
+  currentHand: number;  teamScores: { "Player's Team": number; "Opponent Team": number };
   turnWinner?: "Player's Team" | "Opponent Team";
   onPlayCard?: (index: number) => void;
-  activeSeat?: number;
 }
 
 const GameRound: React.FC<GameRoundProps> = ({
@@ -50,11 +48,9 @@ const GameRound: React.FC<GameRoundProps> = ({
   onFold,
   isTrucoCalled,
   isRaiseEnabled,
-  currentHand,
-  teamScores,
+  currentHand,  teamScores,
   turnWinner,
   onPlayCard,
-  activeSeat,
 }) => {
   const [actionLogMinimized, setActionLogMinimized] = React.useState(false);
   return (

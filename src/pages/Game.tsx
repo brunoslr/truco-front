@@ -11,10 +11,8 @@ const Game: React.FC = () => {
   const [isTrucoCalled, setIsTrucoCalled] = useState(false);
   const [isRaiseEnabled, setIsRaiseEnabled] = useState(false);
   const [currentHand, setCurrentHand] = useState(1);
-  const [teamScores, setTeamScores] = useState<{ [team: string]: number }>({});
-  const [turnWinner, setTurnWinner] = useState<string | null>(null);
+  const [teamScores, setTeamScores] = useState<{ [team: string]: number }>({});  const [turnWinner, setTurnWinner] = useState<string | null>(null);
   const [actions, setActions] = useState<any[]>([]);
-  const [activeSeat, setActiveSeat] = useState<number>(0);
   const [playerHand, setPlayerHand] = useState<any[]>([]);
 
   const fetchGameState = async (gid: string, seat?: number) => {
@@ -52,12 +50,13 @@ const Game: React.FC = () => {
                   { value: '', suit: '' }
                 ];
               }
-              
-              return {
+                return {
                 ...player,
                 name: isCurrentPlayer ? 'You' : player.name || `Player ${index + 1}`,
                 hand: playerHand,
-                seat: player.seat
+                seat: player.seat,
+                isActive: false, // Initially no one is active until polling starts
+                team: isCurrentPlayer ? "Player's Team" : "Opponent Team"
               };
             });
             
@@ -101,13 +100,14 @@ const Game: React.FC = () => {
                 ];
               }
             }
-            
-            return {
+              return {
               ...player,
               name: isCurrentPlayer ? 'You' : player.name || `Player ${index + 1}`,
               hand: playerHand,
-              seat: player.seat // Make sure seat is preserved
-            };          });
+              seat: player.seat, // Make sure seat is preserved
+              isActive: player.isActive || false, // Set active state from backend
+              team: isCurrentPlayer ? "Player's Team" : "Opponent Team" // Set team based on player
+            };});
           
           setPlayers(processedPlayers);
           setPlayedCards(state.playedCards || []);
@@ -117,14 +117,9 @@ const Game: React.FC = () => {
           setCurrentHand(state.currentHand || 1);
           setTeamScores(state.teamScores || {});          setTurnWinner(state.turnWinner || null);
           setActions(state.actionLog || []);
-          
-          // Set current player's hand - find it from the processed players
+            // Set current player's hand - find it from the processed players
           const currentPlayer = processedPlayers.find((p: any) => p.seat === playerSeat);
           setPlayerHand(currentPlayer?.hand || []);
-          
-          // Find active player seat
-          const activeSeatIndex = state.players?.findIndex((p: any) => p.isActive) ?? 0;
-          setActiveSeat(activeSeatIndex >= 0 ? activeSeatIndex : 0);
           
           retryDelay = 1500; // Reset delay on success
         }
@@ -136,43 +131,64 @@ const Game: React.FC = () => {
     };
     poll();
     return () => { cancelled = true; };
-  }, [gameId, playerSeat]);
-
-  const playCard = async (cardIdx: number) => {
-    if (activeSeat !== playerSeat || !playerHand[cardIdx] || !gameId) return;
+  }, [gameId, playerSeat]);  const playCard = async (cardIdx: number) => {
+    if (!gameId || !playerHand[cardIdx]) return;
+    
+    // Check if it's the current player's turn
+    const currentPlayer = players.find(p => p.seat === playerSeat);
+    if (!currentPlayer?.isActive) {
+      return;
+    }
+    
     const card = playerHand[cardIdx];
-    await fetch(`${apiConfig.API_BASE}/play-card`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerSeat, card, gameId }),
-    });
+    
+    try {
+      await fetch(`${apiConfig.API_BASE}/play-card`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerSeat, card, gameId }),
+      });
+    } catch (error) {
+      console.error('Failed to play card:', error);
+    }
   };
-
   const onTruco = async () => {
     if (!gameId) return;
-    await fetch(`${apiConfig.API_BASE}/press-button`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerSeat, action: 'truco', gameId }),
-    });
+    try {
+      await fetch(`${apiConfig.API_BASE}/press-button`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerSeat, action: 'truco', gameId }),
+      });
+    } catch (error) {
+      console.error('Failed to call truco:', error);
+    }
   };
   
   const onRaise = async () => {
     if (!gameId) return;
-    await fetch(`${apiConfig.API_BASE}/press-button`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerSeat, action: 'raise', gameId }),
-    });
+    try {
+      await fetch(`${apiConfig.API_BASE}/press-button`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerSeat, action: 'raise', gameId }),
+      });
+    } catch (error) {
+      console.error('Failed to raise:', error);
+    }
   };
   
   const onFold = async () => {
     if (!gameId) return;
-    await fetch(`${apiConfig.API_BASE}/press-button`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerSeat, action: 'fold', gameId }),
-    });
+    try {
+      await fetch(`${apiConfig.API_BASE}/press-button`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerSeat, action: 'fold', gameId }),
+      });
+    } catch (error) {
+      console.error('Failed to fold:', error);
+    }
   };
   // Ensure teamScores always has both keys for GameRound
   const safeTeamScores = {
@@ -195,15 +211,35 @@ const Game: React.FC = () => {
     }
     
     return arranged;
-  };
-  const arrangedPlayers = arrangePlayersForUI(players, playerSeat);
+  };  const arrangedPlayers = arrangePlayersForUI(players, playerSeat);
+  
+  // Find if it's the current player's turn
+  const isMyTurn = players.find(p => p.seat === playerSeat)?.isActive || false;
   
   return (
     <div style={{ padding: 20 }}>
-      <h2>Game Page</h2>      <p>Game ID: {gameId}</p>
+      <h2>Game Page</h2>
+      <p>Game ID: {gameId}</p>
       <p>Player Seat: {playerSeat}</p>
       <p>Players: {players.length}</p>
       <p>Your Hand: {playerHand.length} cards</p>
+      
+      {/* Turn indicator */}
+      {isMyTurn && (
+        <div style={{ 
+          padding: '8px 16px', 
+          backgroundColor: '#ffe066', 
+          color: '#7a5c00',
+          borderRadius: 8, 
+          fontWeight: 'bold',
+          margin: '10px 0',
+          textAlign: 'center',
+          border: '2px solid #c9a227'
+        }}>
+          🎯 It's your turn! Click a card to play it.
+        </div>
+      )}
+      
       {playerHand.length > 0 && (
         <div style={{ marginBottom: 20, padding: 10, backgroundColor: '#f0f0f0', borderRadius: 5 }}>
           <strong>Your Cards:</strong>
@@ -233,11 +269,9 @@ const Game: React.FC = () => {
           onFold={onFold}
           isTrucoCalled={isTrucoCalled}
           isRaiseEnabled={isRaiseEnabled}
-          currentHand={currentHand}
-          teamScores={safeTeamScores}
+          currentHand={currentHand}          teamScores={safeTeamScores}
           turnWinner={turnWinner as "Player's Team" | "Opponent Team" | undefined}
           onPlayCard={playCard}
-          activeSeat={activeSeat}
         />
       )}
     </div>
