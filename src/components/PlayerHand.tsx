@@ -10,20 +10,30 @@ interface CardProps {
 interface PlayerHandProps {
   initialCards: CardProps[];
   direction?: 'horizontal' | 'vertical';
-  faceUp?: boolean;
   onPlayCard?: (index: number) => void;
   isActive?: boolean;
-  alwaysShowBack?: boolean;
 }
 
-const PlayerHand: React.FC<PlayerHandProps> = ({ initialCards, direction = 'horizontal', faceUp = true, onPlayCard, isActive, alwaysShowBack }) => {
+const PlayerHand: React.FC<PlayerHandProps> = ({ initialCards, direction = 'horizontal', onPlayCard, isActive }) => {
+  console.log('PlayerHand received cards:', initialCards);
+  
   return (
-    <div className={direction === 'vertical' ? styles['player-hand-vertical'] : styles['player-hand-horizontal']}>
-      {initialCards.map((card, index) => (
-        <div key={index} onClick={() => onPlayCard && isActive && onPlayCard(index)} style={onPlayCard && isActive ? { cursor: 'pointer' } : {}}>
-          <Card value={card.value} suit={card.suit} faceUp={alwaysShowBack ? false : faceUp} />
-        </div>
-      ))}
+    <div className={direction === 'vertical' ? styles['player-hand-vertical'] : styles['player-hand-horizontal']}>      {initialCards.map((card, index) => {
+        // If card has value and suit, show it face-up, otherwise show card back
+        const shouldShowFaceUp = !!(card.value && card.suit);
+        
+        console.log(`Card ${index}:`, card, 'shouldShowFaceUp:', shouldShowFaceUp);
+        
+        return (
+          <div key={index} onClick={() => onPlayCard && isActive && onPlayCard(index)} style={onPlayCard && isActive ? { cursor: 'pointer' } : {}}>
+            <Card 
+              value={card.value || ''} 
+              suit={card.suit || ''} 
+              faceUp={shouldShowFaceUp} 
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

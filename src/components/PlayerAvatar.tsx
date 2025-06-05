@@ -39,12 +39,9 @@ const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
   return (
     <div className={styles.avatarContainer + (isActive ? ' ' + styles.active : '')}>
       <div className={styles.teamIndicator} data-team={teamIndicator === "Player's Team" ? 'blue' : 'red'} />
-      <div className={styles.playerName}>{playerName}</div>
-      <div className={styles.handWrapper}>
+      <div className={styles.playerName}>{playerName}</div>      <div className={styles.handWrapper}>
         <PlayerHand
           initialCards={hand}
-          faceUp={isPlayer}
-          alwaysShowBack={!isPlayer}
           onPlayCard={onPlayCard}
           isActive={isActive && isPlayer}
         />

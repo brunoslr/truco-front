@@ -1,248 +1,255 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import apiConfig from '../config/apiConfig';
 import GameRound from '../components/GameRound';
-import { usePlayerHand } from '../services/playerHandProvider';
-import { getMockGameActions, getMockAIMove, getMockTurnWinner } from '../services/mockGameActions';
-import { useDemoTrucoSetup } from './demoTrucoSetup';
-import type { ActionLogEntry } from '../services/mockGameActions';
-
-// Helper type for playedCardsState
-interface PlayedCardSlot {
-  playerName: string;
-  card: { value: string; suit: string } | null;
-}
 
 const Game: React.FC = () => {
-  const initialCards = usePlayerHand();
-  // Stakes start at 2, Truco sets to 4, each raise +4, max 12
+  const [gameId, setGameId] = useState<string | null>(null);
+  const [playerSeat, setPlayerSeat] = useState<number>(0);
+  const [players, setPlayers] = useState<any[]>([]);
+  const [playedCards, setPlayedCards] = useState<any[]>([]);
   const [stakes, setStakes] = useState(2);
-  // Use mock actions for now
-  const [actions, setActions] = useState<ActionLogEntry[]>(getMockGameActions());
-
-  // Track whose turn it is (seat number, 0 = You)
-  const [activeSeat, setActiveSeat] = useState(1); // Dealer is 0, so first to play is 1 (counter-clockwise)
-
-  // Play a card (frontend simulation for now)
-  const [playerHand, setPlayerHand] = useState(initialCards);
-  const [playedCardsState, setPlayedCardsState] = useState<PlayedCardSlot[]>([
-    { playerName: 'You', card: null },
-    { playerName: 'AI 1', card: null },
-    { playerName: 'Partner', card: null },
-    { playerName: 'AI 2', card: null },
-  ]);
-
-  // Track dealer seat (always set to 3 for AI 2)
-  const dealerSeat = 3;
-
-  // Calculate AI hand sizes based on cards played
-  const aiHandSizes = [
-    3 - (playedCardsState[1].card ? 1 : 0),
-    3 - (playedCardsState[2].card ? 1 : 0),
-    3 - (playedCardsState[3].card ? 1 : 0),
-  ];
-
-  // Demo data for GameRound integration
-  const players = useDemoTrucoSetup(playerHand, dealerSeat, aiHandSizes);
-  const teamScores = { "Player's Team": 6, 'Opponent Team': 4 };
-  const currentHand = 1;
-
-  // State for button logic
   const [isTrucoCalled, setIsTrucoCalled] = useState(false);
-  // For now, raise is always enabled when Truco is called and stakes < 12
-  const isRaiseEnabled = isTrucoCalled && stakes < 12;
-
+  const [isRaiseEnabled, setIsRaiseEnabled] = useState(false);
+  const [currentHand, setCurrentHand] = useState(1);
+  const [teamScores, setTeamScores] = useState<{ [team: string]: number }>({});
   const [turnWinner, setTurnWinner] = useState<string | null>(null);
-  const [turnNumber, setTurnNumber] = useState(1);
-  const [handOver, setHandOver] = useState(false);
+  const [actions, setActions] = useState<any[]>([]);
+  const [activeSeat, setActiveSeat] = useState<number>(0);
+  const [playerHand, setPlayerHand] = useState<any[]>([]);
 
-  // Simulate sending play-card payload to backend (log for demo)
-  const sendPlayCardPayload = (playerId: string, card?: { value: string; suit: string } | null) => {
-    let payload;
-    if (card === undefined) {
-      // AI move: only playerId
-      payload = { playerId };
-    } else if (card && card.value === '0' && card.suit === '') {
-      // Fold
-      payload = { playerId, card: { value: 0, suit: "" } };
-    } else {
-      // Human play
-      payload = { playerId, card };
+  const fetchGameState = async (gid: string, seat?: number) => {
+    const url = seat !== undefined ? `${apiConfig.API_BASE}/${gid}?playerSeat=${seat}` : `${apiConfig.API_BASE}/${gid}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch game state');
+    return await res.json();
+  };
+
+  useEffect(() => {
+    if (!gameId) {
+      fetch(`${apiConfig.API_BASE}/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerName: 'Player' }),
+      })
+        .then(res => res.json())        .then(data => {
+          console.log('Game start response:', data);
+          setGameId(data.gameId);
+          setPlayerSeat(data.playerSeat || 0);
+          
+          // Handle initial game state from start response
+          if (data.players) {
+            const processedPlayers = data.players.map((player: any, index: number) => {
+              const isCurrentPlayer = player.seat === (data.playerSeat || 0);
+              
+              let playerHand = [];
+              if (isCurrentPlayer && data.hand) {
+                // Current player: use hand from start response
+                playerHand = data.hand;
+              } else {
+                // Other players: show card backs as placeholder
+                playerHand = [
+                  { value: '', suit: '' },
+                  { value: '', suit: '' },
+                  { value: '', suit: '' }
+                ];
+              }
+              
+              return {
+                ...player,
+                name: isCurrentPlayer ? 'You' : player.name || `Player ${index + 1}`,
+                hand: playerHand,
+                seat: player.seat
+              };
+            });
+            
+            setPlayers(processedPlayers);
+            setPlayerHand(data.hand || []);
+            setTeamScores(data.teamScores || {});
+            setStakes(data.stakes || 2);
+            setCurrentHand(data.currentHand || 1);
+          }
+        });
     }
-    // For now, just log the payload (replace with real API call in production)
-    // eslint-disable-next-line no-console
-    console.log('[MOCK API] POST /api/game/play-card', payload);
-  };
+  }, [gameId]);  useEffect(() => {
+    if (!gameId) return;
+    let cancelled = false;
+    let retryDelay = 1500; // Start with 1.5s
+    const maxDelay = 30000; // Max 30s
 
-  const onTruco = () => {
-    setStakes((prev) => {
-      if (prev < 4) return 4;
-      if (prev < 12) return Math.min(prev + 4, 12);
-      return prev;
-    });
-    setActions((prev) => [
-      ...prev,
-      { type: 'button-pressed', player: 'Player', action: 'truco' }
-    ]);
-    setIsTrucoCalled(true);
-  };
-
-  const onRaise = () => {
-    setStakes((prev) => (prev < 12 ? Math.min(prev + 4, 12) : prev));
-    setActions((prev) => [
-      ...prev,
-      { type: 'button-pressed', player: 'Player', action: 'raise' }
-    ]);
-  };
-
-  const onFold = () => {
-    sendPlayCardPayload('You', { value: '0', suit: '' }); // Fold
-    setActions((prev) => [
-      ...prev,
-      { type: 'button-pressed', player: 'Player', action: 'fold' }
-    ]);
-    // Reset round state for demonstration
-    setIsTrucoCalled(false);
-    setStakes(2);
-  };
-
-  const checkTurnEnd = (newPlayedCards: PlayedCardSlot[]) => {
-    // If all 4 cards are played, determine winner
-    if (newPlayedCards.every(slot => slot.card)) {
-      const winnerTeam = getMockTurnWinner(newPlayedCards);
-      if (!winnerTeam) return;
-      setTurnWinner(winnerTeam);
-      setActions(prev => [
-        ...prev,
-        { type: 'turn-result', winnerTeam: winnerTeam },
-      ]);
-      // After a short delay, clear the play area for next turn or reset hand
-      setTimeout(() => {
-        setTurnWinner(null);
-        setTurnNumber(tn => tn + 1);
-        // If 3 turns played, reset hand (simulate end of hand)
-        if (turnNumber >= 3) {
-          setHandOver(true);
-          // Reset everything for new hand (demo logic)
-          setTimeout(() => {
-            setPlayerHand(initialCards);
-            setPlayedCardsState([
-              { playerName: 'You', card: null },
-              { playerName: 'AI 1', card: null },
-              { playerName: 'Partner', card: null },
-              { playerName: 'AI 2', card: null },
-            ]);
-            setTurnNumber(1);
-            setHandOver(false);
-            // Do NOT reset teamScores here; only reset hands/cards
-          }, 1500);
-        } else {
-          setPlayedCardsState([
-            { playerName: 'You', card: null },
-            { playerName: 'AI 1', card: null },
-            { playerName: 'Partner', card: null },
-            { playerName: 'AI 2', card: null },
-          ]);
+    const poll = async () => {
+      try {
+        const state = await fetchGameState(gameId, playerSeat);
+        if (!cancelled) {          console.log('Backend response:', state);
+          console.log('Player seat:', playerSeat);
+          console.log('Players from backend:', state.players);
+            // Process players and mark the current player
+          const processedPlayers = (state.players || []).map((player: any, index: number) => {
+            const isCurrentPlayer = player.seat === playerSeat;
+            
+            let playerHand = [];
+            
+            if (isCurrentPlayer) {
+              // Current player: use player.hand from the backend
+              playerHand = player.hand || [];
+            } else {
+              // Other players: show their cards if available, otherwise show card backs
+              if (player.hand && player.hand.length > 0) {
+                // For other players, show their actual cards (backend provides them)
+                playerHand = player.hand;
+              } else {
+                // Show 3 card backs as placeholder
+                playerHand = [
+                  { value: '', suit: '' },
+                  { value: '', suit: '' },
+                  { value: '', suit: '' }
+                ];
+              }
+            }
+            
+            return {
+              ...player,
+              name: isCurrentPlayer ? 'You' : player.name || `Player ${index + 1}`,
+              hand: playerHand,
+              seat: player.seat // Make sure seat is preserved
+            };
+          });
+          
+          console.log('Processed players:', processedPlayers);
+          setPlayers(processedPlayers);
+          setPlayedCards(state.playedCards || []);
+          setStakes(state.stakes || 2);
+          setIsTrucoCalled(state.isTrucoCalled || false);
+          setIsRaiseEnabled(state.isRaiseEnabled || false);
+          setCurrentHand(state.currentHand || 1);
+          setTeamScores(state.teamScores || {});          setTurnWinner(state.turnWinner || null);
+          setActions(state.actionLog || []);
+          
+          // Set current player's hand - find it from the processed players
+          const currentPlayer = processedPlayers.find((p: any) => p.seat === playerSeat);
+          setPlayerHand(currentPlayer?.hand || []);
+          
+          // Find active player seat
+          const activeSeatIndex = state.players?.findIndex((p: any) => p.isActive) ?? 0;
+          setActiveSeat(activeSeatIndex >= 0 ? activeSeatIndex : 0);
+          
+          retryDelay = 1500; // Reset delay on success
         }
-      }, 1200);
-    }
-  };
-
-  // Simulate AI move (mock API)
-  const aiMove = () => {
-    // For demo, AI hands are empty, but in a real game, pass AI hands as second arg
-    const aiHands = {
-      1: [], // AI 1 hand
-      2: [], // Partner hand (if AI)
-      3: [], // AI 2 hand
+      } catch (e) {
+        console.error('Failed to fetch game state:', e);
+        retryDelay = Math.min(retryDelay * 2, maxDelay); // Exponential backoff
+      }
+      if (!cancelled) setTimeout(poll, retryDelay);
     };
-    const { seat, card } = getMockAIMove(playedCardsState, aiHands);
-    if (!card) return;
-    sendPlayCardPayload(players[seat].name, undefined); // AI move: only playerId
-    // Update playedCards for AI
-    const newPlayedCards: PlayedCardSlot[] = playedCardsState.map((slot, idx) =>
-      idx === seat ? { playerName: slot.playerName, card } : { playerName: slot.playerName, card: slot.card }
-    );
-    setPlayedCardsState(newPlayedCards);
-    // Add to action log
-    setActions(prev => [
-      ...prev,
-      { type: 'card-played', player: players[seat].name, card: `${card.value} of ${card.suit}` }
-    ]);
-    // Advance turn counter-clockwise
-    setActiveSeat((prev) => (prev + 3) % 4);
-    checkTurnEnd(newPlayedCards);
-  };
+    poll();
+    return () => { cancelled = true; };
+  }, [gameId, playerSeat]);
 
-  // DEV ONLY: Button to force a random AI play for demo/testing
-  const devForceAIMove = () => {
-    // Pick a random AI seat that hasn't played yet and has cards left
-    const aiSeats = [1, 2, 3];
-    const available = aiSeats.filter(seat => !playedCardsState[seat].card);
-    if (available.length === 0) return;
-    const seat = available[Math.floor(Math.random() * available.length)];
-    // Simulate a random card (for demo)
-    const card = { value: String(Math.floor(Math.random() * 10) + 1), suit: ['Clubs', 'Hearts', 'Spades', 'Diamonds'][Math.floor(Math.random() * 4)] };
-    // Build new playedCardsState with correct types
-    const newPlayedCards: PlayedCardSlot[] = playedCardsState.map((slot, idx) =>
-      idx === seat ? { playerName: slot.playerName, card } : { playerName: slot.playerName, card: slot.card }
-    );
-    setPlayedCardsState(newPlayedCards);
-    setActions(prev => [
-      ...prev,
-      { type: 'card-played', player: players[seat].name, card: `${card.value} of ${card.suit}` }
-    ]);
-    setActiveSeat((prev) => (prev + 3) % 4);
-    checkTurnEnd(newPlayedCards);
-  };
-
-  const playCard = (cardIdx: number) => {
-    // Only allow if it's the player's turn (activeSeat === 0)
-    if (activeSeat !== 0 || !playerHand[cardIdx]) return;
+  const playCard = async (cardIdx: number) => {
+    if (activeSeat !== playerSeat || !playerHand[cardIdx] || !gameId) return;
     const card = playerHand[cardIdx];
-    sendPlayCardPayload('You', card); // Human play
-    // Remove card from player's hand
-    const newHand = playerHand.filter((_, idx) => idx !== cardIdx);
-    setPlayerHand(newHand);
-    // Update playedCards table for the player
-    const newPlayedCards: PlayedCardSlot[] = playedCardsState.map(slot =>
-      slot.playerName === 'You' ? { playerName: slot.playerName, card } : { playerName: slot.playerName, card: slot.card }
-    );
-    setPlayedCardsState(newPlayedCards);
-    // Add to action log
-    setActions(prev => [
-      ...prev,
-      { type: 'card-played', player: 'You', card: `${card.value} of ${card.suit}` }
-    ]);
-    // Advance turn counter-clockwise: (activeSeat + 3) % 4
-    setActiveSeat((prev) => (prev + 3) % 4);
-    checkTurnEnd(newPlayedCards);
-    // Simulate AI move after a short delay if it's now an AI's turn
-    setTimeout(() => {
-      if (activeSeat !== 0) aiMove();
-    }, 500);
+    await fetch(`${apiConfig.API_BASE}/play-card`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerSeat, card, gameId }),
+    });
   };
+
+  const onTruco = async () => {
+    if (!gameId) return;
+    await fetch(`${apiConfig.API_BASE}/press-button`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerSeat, action: 'truco', gameId }),
+    });
+  };
+  
+  const onRaise = async () => {
+    if (!gameId) return;
+    await fetch(`${apiConfig.API_BASE}/press-button`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerSeat, action: 'raise', gameId }),
+    });
+  };
+  
+  const onFold = async () => {
+    if (!gameId) return;
+    await fetch(`${apiConfig.API_BASE}/press-button`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerSeat, action: 'fold', gameId }),
+    });
+  };
+  // Ensure teamScores always has both keys for GameRound
+  const safeTeamScores = {
+    "Player's Team": teamScores["Player's Team"] ?? 0,
+    "Opponent Team": teamScores["Opponent Team"] ?? 0,
+  };
+
+  // Arrange players for UI - put current player at bottom (index 0)
+  const arrangePlayersForUI = (players: any[], currentPlayerSeat: number) => {
+    if (players.length !== 4) return players;
+    
+    const arranged = new Array(4);
+    // Current player goes to bottom (index 0)
+    arranged[0] = players[currentPlayerSeat];
+    
+    // Arrange other players clockwise from current player
+    for (let i = 1; i < 4; i++) {
+      const seatIndex = (currentPlayerSeat + i) % 4;
+      arranged[i] = players[seatIndex];
+    }
+    
+    return arranged;
+  };
+
+  const arrangedPlayers = arrangePlayersForUI(players, playerSeat);
+  
+  console.log('Final arranged players for UI:', arrangedPlayers);
+  console.log('Your player (should be at index 0):', arrangedPlayers[0]);
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>Game Page</h2>
-      <button style={{ marginBottom: 12, background: '#ffe066', color: '#7a5c00', fontWeight: 'bold', border: '1px solid #c9a227', borderRadius: 6, padding: '6px 18px', cursor: 'pointer' }} onClick={devForceAIMove}>
-        DEV: Force Random AI Play
-      </button>
-      <GameRound
-        players={players}
-        playedCards={playedCardsState}
-        stakes={stakes}
-        actions={actions}
-        onTruco={onTruco}
-        onRaise={onRaise}
-        onFold={onFold}
-        isTrucoCalled={isTrucoCalled}
-        isRaiseEnabled={isRaiseEnabled}
-        currentHand={currentHand}
-        teamScores={teamScores}
-        turnWinner={turnWinner as "Player's Team" | "Opponent Team" | undefined}
-        onPlayCard={playCard}
-        activeSeat={activeSeat}
-      />
+      <h2>Game Page</h2>      <p>Game ID: {gameId}</p>
+      <p>Player Seat: {playerSeat}</p>
+      <p>Players: {players.length}</p>
+      <p>Your Hand: {playerHand.length} cards</p>
+      {playerHand.length > 0 && (
+        <div style={{ marginBottom: 20, padding: 10, backgroundColor: '#f0f0f0', borderRadius: 5 }}>
+          <strong>Your Cards:</strong>
+          <div style={{ display: 'flex', gap: 10, marginTop: 5 }}>
+            {playerHand.map((card: any, index: number) => (
+              <div key={index} style={{ 
+                padding: '5px 10px', 
+                backgroundColor: 'white', 
+                border: '1px solid #ccc', 
+                borderRadius: 3,
+                fontSize: 12
+              }}>
+                {card.value} of {card.suit}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+        {arrangedPlayers.length > 0 && (
+        <GameRound
+          players={arrangedPlayers}
+          playedCards={playedCards}
+          stakes={stakes}
+          actions={actions}
+          onTruco={onTruco}
+          onRaise={onRaise}
+          onFold={onFold}
+          isTrucoCalled={isTrucoCalled}
+          isRaiseEnabled={isRaiseEnabled}
+          currentHand={currentHand}
+          teamScores={safeTeamScores}
+          turnWinner={turnWinner as "Player's Team" | "Opponent Team" | undefined}
+          onPlayCard={playCard}
+          activeSeat={activeSeat}
+        />
+      )}
     </div>
   );
 };
