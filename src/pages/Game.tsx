@@ -255,15 +255,15 @@ const Game: React.FC = () => {
     
     return arranged;
   };
-  const arrangedPlayers = arrangePlayersForUI(players, playerSeat);
-  
-  // Create played cards for CardPlayArea based on arranged players
+  const arrangedPlayers = arrangePlayersForUI(players, playerSeat);  // Create played cards for CardPlayArea based on arranged players
   const arrangedPlayedCards = arrangedPlayers.map((player: any, index: number) => {
-    const playedCardData = (playedCards || []).find((pcd: any) => pcd?.isCurrentPlayer === (player?.seat === playerSeat));
+    // Get the played card for this player's seat directly from the playedCards array
+    // playedCards is indexed by seat number (0,1,2,3)
+    const seatPlayedCard = playedCards[player?.seat] || null;
     
     return {
       playerName: player?.name || `Player ${index + 1}`,
-      card: playedCardData?.card || null,
+      card: seatPlayedCard?.card || null,
       team: player?.team || "Opponent Team",
       isCurrentPlayer: player?.seat === playerSeat
     };
