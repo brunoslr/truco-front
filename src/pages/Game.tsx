@@ -117,10 +117,23 @@ const Game: React.FC = () => {
               isActive: player.isActive || false, // Set active state from backend
               team: isCurrentPlayer ? "Player's Team" : "Opponent Team" // Set team based on player
             };
-          });
+          });          setPlayers(processedPlayers);
           
-          setPlayers(processedPlayers);
-          setPlayedCards(state.playedCards || []);
+          // Transform played cards data to include team and current player info
+          // Always create 4 slots (one for each player)
+          const transformedPlayedCards = [0, 1, 2, 3].map(seat => {
+            const player = processedPlayers.find((p: any) => p.seat === seat);
+            const playedCardData = (state.playedCards || []).find((pcd: any) => pcd.playerSeat === seat);
+            
+            return {
+              playerName: player?.name || `Player ${seat + 1}`,
+              card: playedCardData?.card || null,
+              team: player?.team || "Opponent Team",
+              isCurrentPlayer: seat === playerSeat
+            };
+          });
+          setPlayedCards(transformedPlayedCards);
+          
           setStakes(state.stakes || 2);
           setIsTrucoCalled(state.isTrucoCalled || false);
           setIsRaiseEnabled(state.isRaiseEnabled || false);
@@ -242,8 +255,19 @@ const Game: React.FC = () => {
     
     return arranged;
   };
-
   const arrangedPlayers = arrangePlayersForUI(players, playerSeat);
+  
+  // Create played cards for CardPlayArea based on arranged players
+  const arrangedPlayedCards = arrangedPlayers.map((player: any, index: number) => {
+    const playedCardData = (playedCards || []).find((pcd: any) => pcd?.isCurrentPlayer === (player?.seat === playerSeat));
+    
+    return {
+      playerName: player?.name || `Player ${index + 1}`,
+      card: playedCardData?.card || null,
+      team: player?.team || "Opponent Team",
+      isCurrentPlayer: player?.seat === playerSeat
+    };
+  });
   
   // Find if it's the current player's turn
   const isMyTurn = players.find(p => p.seat === playerSeat)?.isActive || false;
@@ -289,12 +313,10 @@ const Game: React.FC = () => {
             ))}
           </div>
         </div>
-      )}
-
-      {arrangedPlayers.length > 0 && (
+      )}      {arrangedPlayers.length > 0 && (
         <GameRound
           players={arrangedPlayers}
-          playedCards={playedCards}
+          playedCards={arrangedPlayedCards}
           stakes={stakes}
           actions={actions}
           onTruco={onTruco}

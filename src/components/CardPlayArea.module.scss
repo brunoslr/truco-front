@@ -15,13 +15,61 @@
   flex-direction: column;
   align-items: center;
   min-width: 80px;
+  position: relative;
+  transition: all 0.3s ease;
+  
+  // Team-based styling
+  &.playerTeam {
+    .playerNameBelow {
+      color: #2d5016;
+      background: rgba(45, 80, 22, 0.1);
+      border-color: #5a9b2d;
+    }
+    
+    .emptySlot {
+      border-color: #5a9b2d;
+      background: rgba(90, 155, 45, 0.05);
+    }
+  }
+  
+  &.opponentTeam {
+    .playerNameBelow {
+      color: #7a1e1e;
+      background: rgba(122, 30, 30, 0.1);
+      border-color: #b83232;
+    }
+    
+    .emptySlot {
+      border-color: #b83232;
+      background: rgba(184, 50, 50, 0.05);
+    }
+  }
+  
+  &.currentPlayer {
+    .playerNameBelow {
+      animation: pulse 2s infinite;
+      font-weight: bold;
+    }
+  }
 }
 
-.playerLabel {
-  font-size: 1rem;
+.playerNameBelow {
+  font-size: 0.8rem;
   color: #7a5c00;
-  margin-bottom: 8px;
-  font-weight: bold;
+  margin-top: 8px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid #c9a227;
+  background: rgba(201, 162, 39, 0.1);
+  min-width: 60px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.waitingText {
+  font-size: 0.7rem;
+  font-weight: 500;
 }
 
 .emptySlot {
@@ -35,4 +83,16 @@
   color: #bbb;
   font-size: 1.1rem;
   background: #fff;
+  transition: all 0.3s ease;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
