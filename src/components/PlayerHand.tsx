@@ -12,12 +12,32 @@ interface PlayerHandProps {
   direction?: 'horizontal' | 'vertical';
   onPlayCard?: (index: number) => void;
   isActive?: boolean;
+  faceUp?: boolean;
+  alwaysShowBack?: boolean;
 }
 
-const PlayerHand: React.FC<PlayerHandProps> = ({ initialCards, direction = 'horizontal', onPlayCard, isActive }) => {  return (
+const PlayerHand: React.FC<PlayerHandProps> = ({ 
+  initialCards, 
+  direction = 'horizontal', 
+  onPlayCard, 
+  isActive,
+  faceUp,
+  alwaysShowBack = false
+}) => {  return (
     <div className={direction === 'vertical' ? styles['player-hand-vertical'] : styles['player-hand-horizontal']}>      {initialCards.map((card, index) => {
-        // If card has value and suit, show it face-up, otherwise show card back
-        const shouldShowFaceUp = !!(card.value && card.suit);        return (
+        // Determine if card should show face-up:
+        // 1. If alwaysShowBack is true, always show back
+        // 2. If faceUp prop is explicitly set, use that
+        // 3. Otherwise, auto-detect based on card having value and suit
+        let shouldShowFaceUp = true;
+        
+        if (alwaysShowBack) {
+          shouldShowFaceUp = false;
+        } else if (faceUp !== undefined) {
+          shouldShowFaceUp = faceUp;
+        } else {
+          shouldShowFaceUp = !!(card.value && card.suit);
+        }return (
           <div 
             key={index} 
             onClick={() => onPlayCard && isActive && onPlayCard(index)} 

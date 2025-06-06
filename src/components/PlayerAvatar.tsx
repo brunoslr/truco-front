@@ -44,6 +44,7 @@ const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
           initialCards={hand}
           onPlayCard={onPlayCard}
           isActive={isActive && isPlayer}
+          faceUp={isPlayer}
         />
       </div>
       <ButtonElements

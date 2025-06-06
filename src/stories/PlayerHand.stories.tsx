@@ -1,8 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import PlayerHand from '../components/PlayerHand';
-import { getMockPlayerHand } from '../services/mockBackend';
 
-const mockCards = getMockPlayerHand().map(card => ({ value: card.rank, suit: card.suit }));
+const mockCards = [
+  { value: '4', suit: 'Clubs' },
+  { value: '7', suit: 'Hearts' },
+  { value: '3', suit: 'Clubs' },
+];
 
 const meta: Meta<typeof PlayerHand> = {
   title: 'Components/PlayerHand',

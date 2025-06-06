@@ -1,7 +1,6 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ActionLog from './ActionLog';
-import type { ActionLogEntry } from '../services/mockGameActions';
+import type { ActionLogEntry } from './ActionLog';
 
 describe('ActionLog', () => {
   it('renders empty state when no actions', () => {

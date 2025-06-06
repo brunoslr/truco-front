@@ -1,6 +1,11 @@
 import React from 'react';
 import styles from './ActionLog.module.scss';
-import type { ActionLogEntry } from '../services/mockGameActions';
+
+export type ActionLogEntry =
+  | { type: 'card-played'; player: string; card: string }
+  | { type: 'button-pressed'; player: string; action: 'truco' | 'raise' | 'fold' }
+  | { type: 'hand-result'; handNumber: number; winner: string }
+  | { type: 'turn-result'; winnerTeam: "Player's Team" | "Opponent Team" };
 
 export interface ActionLogProps {
   actions: ActionLogEntry[];

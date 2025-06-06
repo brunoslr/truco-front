@@ -36,9 +36,24 @@ const Game: React.FC = () => {
           setPlayerSeat(data.playerSeat || 0);
           
           // Handle initial game state from start response
-          if (data.players) {
-            const processedPlayers = data.players.map((player: any, index: number) => {
+          if (data.players) {            const processedPlayers = data.players.map((player: any, index: number) => {
               const isCurrentPlayer = player.seat === (data.playerSeat || 0);
+              
+              // Assign proper names based on seat
+              let playerName;
+              if (isCurrentPlayer) {
+                playerName = 'You';
+              } else {
+                switch (player.seat) {
+                  case 1: playerName = 'Opponent AI 1'; break;
+                  case 2: playerName = 'Partner AI'; break;
+                  case 3: playerName = 'Opponent AI 2'; break;
+                  default: playerName = `Player ${player.seat + 1}`;
+                }
+              }
+              
+              // Assign teams: seats 0 & 2 = Player's Team, seats 1 & 3 = Opponent Team
+              const team = (player.seat === 0 || player.seat === 2) ? "Player's Team" : "Opponent Team";
               
               let playerHand = [];
               if (isCurrentPlayer && data.hand) {
@@ -55,11 +70,11 @@ const Game: React.FC = () => {
 
               return {
                 ...player,
-                name: isCurrentPlayer ? 'You' : player.name || `Player ${index + 1}`,
+                name: playerName,
                 hand: playerHand,
                 seat: player.seat,
                 isActive: false, // Initially no one is active until polling starts
-                team: isCurrentPlayer ? "Player's Team" : "Opponent Team"
+                team: team
               };
             });
             
@@ -84,10 +99,25 @@ const Game: React.FC = () => {
         const state = await fetchGameState(gameId, playerSeat);
         console.log('Polling response:', state);
         
-        if (!cancelled) {
-          // Process players and mark the current player
-          const processedPlayers = (state.players || []).map((player: any, index: number) => {
+        if (!cancelled) {          // Process players and mark the current player
+          const processedPlayers = (state.players || []).map((player: any) => {
             const isCurrentPlayer = player.seat === playerSeat;
+            
+            // Assign proper names based on seat (same logic as initial setup)
+            let playerName;
+            if (isCurrentPlayer) {
+              playerName = 'You';
+            } else {
+              switch (player.seat) {
+                case 1: playerName = 'Opponent AI 1'; break;
+                case 2: playerName = 'Partner AI'; break;
+                case 3: playerName = 'Opponent AI 2'; break;
+                default: playerName = `Player ${player.seat + 1}`;
+              }
+            }
+            
+            // Assign teams: seats 0 & 2 = Player's Team, seats 1 & 3 = Opponent Team
+            const team = (player.seat === 0 || player.seat === 2) ? "Player's Team" : "Opponent Team";
             
             let playerHand = [];
             
@@ -111,24 +141,26 @@ const Game: React.FC = () => {
 
             return {
               ...player,
-              name: isCurrentPlayer ? 'You' : player.name || `Player ${index + 1}`,
+              name: playerName,
               hand: playerHand,
               seat: player.seat, // Make sure seat is preserved
               isActive: player.isActive || false, // Set active state from backend
-              team: isCurrentPlayer ? "Player's Team" : "Opponent Team" // Set team based on player
+              team: team
             };
-          });          setPlayers(processedPlayers);
-          
-          // Transform played cards data to include team and current player info
+          });setPlayers(processedPlayers);
+            // Transform played cards data to include team and current player info
           // Always create 4 slots (one for each player)
           const transformedPlayedCards = [0, 1, 2, 3].map(seat => {
             const player = processedPlayers.find((p: any) => p.seat === seat);
             const playedCardData = (state.playedCards || []).find((pcd: any) => pcd.playerSeat === seat);
             
+            // Get team based on seat number (0,2 = Player's Team, 1,3 = Opponent Team)
+            const team = (seat === 0 || seat === 2) ? "Player's Team" : "Opponent Team";
+            
             return {
               playerName: player?.name || `Player ${seat + 1}`,
               card: playedCardData?.card || null,
-              team: player?.team || "Opponent Team",
+              team: team,
               isCurrentPlayer: seat === playerSeat
             };
           });
@@ -261,10 +293,13 @@ const Game: React.FC = () => {
     // playedCards is indexed by seat number (0,1,2,3)
     const seatPlayedCard = playedCards[player?.seat] || null;
     
+    // Get team based on seat number (0,2 = Player's Team, 1,3 = Opponent Team)
+    const team = (player?.seat === 0 || player?.seat === 2) ? "Player's Team" : "Opponent Team";
+    
     return {
       playerName: player?.name || `Player ${index + 1}`,
       card: seatPlayedCard?.card || null,
-      team: player?.team || "Opponent Team",
+      team: team,
       isCurrentPlayer: player?.seat === playerSeat
     };
   });
