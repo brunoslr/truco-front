@@ -60,11 +60,11 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
               }
             }}
             title={onPlayCard && isActive ? 'Click to play this card' : ''}
-          >
-            <Card 
+          >            <Card 
               value={card.value || ''} 
               suit={card.suit || ''} 
               faceUp={shouldShowFaceUp} 
+              highlight={onPlayCard && isActive && shouldShowFaceUp}
             />
           </div>
         );

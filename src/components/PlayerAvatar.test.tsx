@@ -21,11 +21,10 @@ describe('PlayerAvatar', () => {
         isTrucoCalled={false}
         isRaiseEnabled={true}
       />
-    );
-    expect(getByText('You')).toBeInTheDocument();
+    );    expect(getByText('You')).toBeInTheDocument();
     expect(getByText('4')).toBeInTheDocument();
     expect(getByText('7')).toBeInTheDocument();
-    expect(getByText('Hearts')).toBeInTheDocument();
+    expect(getByText('♥')).toBeInTheDocument(); // Hearts icon
   });
 
   it('renders cardbacks for non-player hands', () => {

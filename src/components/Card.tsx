@@ -11,13 +11,26 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ value, suit, highlight = false, faceUp = true }) => {
   const isRed = suit === 'Hearts' || suit === 'Diamonds';
+  
+  // Get suit icon
+  const getSuitIcon = (suit: string) => {
+    switch (suit.toLowerCase()) {
+      case 'hearts': return '♥';
+      case 'diamonds': return '♦';
+      case 'clubs': return '♣';
+      case 'spades': return '♠';
+      default: return suit;
+    }
+  };
 
   return (
     <div className={classNames(styles.card, { [styles.highlight]: highlight })}>
       {faceUp ? (
         <>
           <div className={styles.value} style={{ color: isRed ? '#d7263d' : '#222' }}>{value}</div>
-          <div className={styles.suit} style={{ color: isRed ? '#d7263d' : '#222' }}>{suit}</div>
+          <div className={styles.suit} style={{ color: isRed ? '#d7263d' : '#222' }}>
+            {getSuitIcon(suit)}
+          </div>
         </>
       ) : (
         <div className={styles.cardBack}>

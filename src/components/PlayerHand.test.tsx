@@ -1,4 +1,3 @@
-import React from 'react';
 import { render } from '@testing-library/react';
 import PlayerHand from './PlayerHand';
 
@@ -12,15 +11,13 @@ describe('PlayerHand', () => {
 
     const { getAllByText } = render(
       <PlayerHand initialCards={initialCards} faceUp={true} alwaysShowBack={false} isActive={true} onPlayCard={jest.fn()} />
-    );
-
-    // Check that all card values and suits are rendered
+    );    // Check that all card values and suits are rendered
     expect(getAllByText('A')[0]).toBeInTheDocument();
     expect(getAllByText('K')[0]).toBeInTheDocument();
     expect(getAllByText('Q')[0]).toBeInTheDocument();
-    expect(getAllByText('hearts')[0]).toBeInTheDocument();
-    expect(getAllByText('spades')[0]).toBeInTheDocument();
-    expect(getAllByText('diamonds')[0]).toBeInTheDocument();
+    expect(getAllByText('♥')[0]).toBeInTheDocument(); // hearts icon
+    expect(getAllByText('♠')[0]).toBeInTheDocument(); // spades icon
+    expect(getAllByText('♦')[0]).toBeInTheDocument(); // diamonds icon
   });
 
   it('renders cardbacks for non-player hands (alwaysShowBack=true)', () => {

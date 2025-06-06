@@ -22,10 +22,14 @@ const CardPlayArea: React.FC<CardPlayAreaProps> = ({ playedCards }) => {
           className={`${styles.cardSlot} ${
             slot.team === "Player's Team" ? styles.playerTeam : styles.opponentTeam
           } ${slot.isCurrentPlayer ? styles.currentPlayer : ''}`}
-        >
-          {slot.card ? (
+        >          {slot.card ? (
             <>
-              <Card value={slot.card.value} suit={slot.card.suit} faceUp={true} />
+              <Card 
+                value={slot.card.value} 
+                suit={slot.card.suit} 
+                faceUp={true} 
+                highlight={slot.isCurrentPlayer}
+              />
               <div className={styles.playerNameBelow}>{slot.playerName}</div>
             </>
           ) : (
