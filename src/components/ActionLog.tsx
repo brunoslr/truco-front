@@ -1,11 +1,6 @@
 import React from 'react';
 import styles from './ActionLog.module.scss';
-
-export type ActionLogEntry =
-  | { type: 'card-played'; player: string; card: string }
-  | { type: 'button-pressed'; player: string; action: 'truco' | 'raise' | 'fold' }
-  | { type: 'hand-result'; handNumber: number; winner: string }
-  | { type: 'turn-result'; winnerTeam: "Player's Team" | "Opponent Team" };
+import type { ActionLogEntry } from '../types/api';
 
 export interface ActionLogProps {
   actions: ActionLogEntry[];
@@ -14,13 +9,44 @@ export interface ActionLogProps {
 function renderAction(action: ActionLogEntry): string {
   switch (action.type) {
     case 'card-played':
-      return `${action.player} played ${action.card}`;
+      if (action.playerSeat !== null && action.card) {
+        return `Player ${action.playerSeat + 1} played ${action.card.value} of ${action.card.suit}`;
+      }
+      return 'Card played';
     case 'button-pressed':
-      return `${action.player} pressed ${action.action.charAt(0).toUpperCase() + action.action.slice(1)}`;
+      if (action.playerSeat !== null && action.action) {
+        return `Player ${action.playerSeat + 1} pressed ${action.action.charAt(0).toUpperCase() + action.action.slice(1)}`;
+      }
+      return 'Button pressed';
     case 'hand-result':
-      return `Hand ${action.handNumber}: ${action.winner} won`;
+      if (action.handNumber !== null && action.winner) {
+        return `Hand ${action.handNumber}: ${action.winner} won`;
+      }
+      return 'Hand completed';
+    case 'game-started':
+      return 'Game started';
+    case 'turn-start':
+      if (action.playerSeat !== null) {
+        return `Player ${action.playerSeat + 1}'s turn`;
+      }
+      return 'Turn started';
+    case 'truco-called':
+      if (action.playerSeat !== null) {
+        return `Player ${action.playerSeat + 1} called Truco`;
+      }
+      return 'Truco called';
+    case 'truco-accepted':
+      if (action.playerSeat !== null) {
+        return `Player ${action.playerSeat + 1} accepted Truco`;
+      }
+      return 'Truco accepted';
+    case 'truco-rejected':
+      if (action.playerSeat !== null) {
+        return `Player ${action.playerSeat + 1} rejected Truco`;
+      }
+      return 'Truco rejected';
     default:
-      return '';
+      return 'Unknown action';
   }
 }
 

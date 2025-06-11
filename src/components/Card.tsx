@@ -10,10 +10,16 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ value, suit, highlight = false, faceUp = true }) => {
-  const isRed = suit === 'Hearts' || suit === 'Diamonds';
+  // Check if suit is red - handle both text names and Unicode symbols
+  const isRed = suit === 'Hearts' || suit === 'Diamonds' || suit === '♥' || suit === '♦';
   
-  // Get suit icon
+  // Get suit icon - if already a Unicode symbol, return as-is, otherwise convert
   const getSuitIcon = (suit: string) => {
+    // If already a Unicode symbol, return it
+    if (['♥', '♦', '♣', '♠'].includes(suit)) {
+      return suit;
+    }
+    // Convert text names to symbols
     switch (suit.toLowerCase()) {
       case 'hearts': return '♥';
       case 'diamonds': return '♦';

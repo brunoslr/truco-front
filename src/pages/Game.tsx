@@ -1,22 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import apiConfig from '../config/apiConfig';
 import GameRound from '../components/GameRound';
+import type { 
+  GameState, 
+  Player, 
+  Card, 
+  ActionLogEntry,
+  TeamScores 
+} from '../types/api';
 
 const Game: React.FC = () => {
   const [gameId, setGameId] = useState<string | null>(null);
   const [playerSeat, setPlayerSeat] = useState<number>(0);
-  const [players, setPlayers] = useState<any[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
   const [playedCards, setPlayedCards] = useState<any[]>([]);
-  const [stakes, setStakes] = useState(2);
-  const [isTrucoCalled, setIsTrucoCalled] = useState(false);
-  const [isRaiseEnabled, setIsRaiseEnabled] = useState(false);
-  const [currentHand, setCurrentHand] = useState(1);
-  const [teamScores, setTeamScores] = useState<{ [team: string]: number }>({});
+  const [stakes, setStakes] = useState<number>(2);
+  const [isTrucoCalled, setIsTrucoCalled] = useState<boolean>(false);
+  const [isRaiseEnabled, setIsRaiseEnabled] = useState<boolean>(false);
+  const [currentHand, setCurrentHand] = useState<number>(1);
+  const [teamScores, setTeamScores] = useState<TeamScores>({
+    "Player's Team": 0,
+    "Opponent Team": 0
+  });
   const [turnWinner, setTurnWinner] = useState<string | null>(null);
-  const [actions, setActions] = useState<any[]>([]);
-  const [playerHand, setPlayerHand] = useState<any[]>([]);
-
-  const fetchGameState = async (gid: string, seat?: number) => {
+  const [actions, setActions] = useState<ActionLogEntry[]>([]);
+  const [playerHand, setPlayerHand] = useState<Card[]>([]);
+  const fetchGameState = async (gid: string, seat?: number): Promise<GameState> => {
     const url = seat !== undefined ? `${apiConfig.API_BASE}/${gid}?playerSeat=${seat}` : `${apiConfig.API_BASE}/${gid}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch game state');
@@ -34,9 +43,8 @@ const Game: React.FC = () => {
         .then(data => {
           setGameId(data.gameId);
           setPlayerSeat(data.playerSeat || 0);
-          
-          // Handle initial game state from start response
-          if (data.players) {            const processedPlayers = data.players.map((player: any, index: number) => {
+            // Handle initial game state from start response
+          if (data.players) {            const processedPlayers = data.players.map((player: any) => {
               const isCurrentPlayer = player.seat === (data.playerSeat || 0);
               
               // Assign proper names based on seat

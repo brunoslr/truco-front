@@ -1,4 +1,4 @@
 export interface Card {
-  rank: string;
+  value: string;
   suit: string;
 }
