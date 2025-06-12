@@ -1,17 +1,22 @@
 .actionLog {
-  background: #f4f4f9;
-  border: 1px solid #bdbdbd;
-  border-radius: 8px;
-  padding: 12px 16px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 16px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .title {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: #4a3c1a;
-  margin-bottom: 8px;
+  color: #495057;
+  margin-bottom: 12px;
+  text-align: center;
+  border-bottom: 2px solid #dee2e6;
+  padding-bottom: 8px;
 }
 
 .list {
@@ -21,19 +26,45 @@
 }
 
 .item {
-  padding: 4px 0;
-  color: #333;
-  font-size: 1rem;
-  border-bottom: 1px solid #ececec;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  background: white;
+  border-radius: 8px;
+  border-left: 4px solid #6c757d;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.item:hover {
+  transform: translateX(2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
 }
 
 .item:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.actionText {
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.timestamp {
+  color: #6c757d;
+  font-size: 0.8rem;
+  text-align: right;
+  font-style: italic;
 }
 
 .empty {
-  color: #888;
+  color: #6c757d;
   font-style: italic;
-  padding: 8px 0;
+  padding: 20px 0;
   text-align: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
 }

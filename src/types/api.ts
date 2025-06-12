@@ -20,7 +20,7 @@ export interface PlayedCard {
 }
 
 export interface ActionLogEntry {
-  type: 'game-started' | 'turn-start' | 'card-played' | 'button-pressed' | 'hand-result' | 'truco-called' | 'truco-accepted' | 'truco-rejected';
+  type: 'game-started' | 'turn-start' | 'card-played' | 'button-pressed' | 'hand-result' | 'turn-result' | 'truco-called' | 'truco-accepted' | 'truco-rejected';
   playerSeat: number | null;
   card: Card | null;
   action: string | null;

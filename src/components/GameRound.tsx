@@ -160,9 +160,15 @@ const GameRound: React.FC<GameRoundProps> = ({
           aria-label={actionLogMinimized ? 'Restore Action Log' : 'Minimize Action Log'}
         >
           {actionLogMinimized ? '◀' : '▶'}
-        </button>
-        {!actionLogMinimized && (
-          <ActionLog actions={actions} />
+        </button>        {!actionLogMinimized && (
+          <ActionLog 
+            actions={actions} 
+            players={players.map(p => ({ 
+              seat: p.seat || 0, 
+              name: p.name, 
+              team: p.team 
+            }))} 
+          />
         )}
       </div>
     </div>

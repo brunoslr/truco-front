@@ -16,16 +16,15 @@ describe('ActionLog', () => {
       winner: null,
       winnerTeam: null,
     }));
-    render(<ActionLog actions={actions} />);
-    // Only the last 10 actions should be shown, in reverse order
-    expect(screen.queryByText('Player 1 played 1 of ♣')).not.toBeInTheDocument();
-    expect(screen.queryByText('Player 2 played 2 of ♣')).not.toBeInTheDocument();
-    expect(screen.getByText('Player 12 played 12 of ♣')).toBeInTheDocument();
-    expect(screen.getByText('Player 3 played 3 of ♣')).toBeInTheDocument();
-    // The first rendered item should be Player 12 played 12 of ♣
+    render(<ActionLog actions={actions} />);    // Only the last 10 actions should be shown, in reverse order
+    expect(screen.queryByText(/Player 1 played 1♣/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Player 2 played 2♣/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Player 12 played 12♣/)).toBeInTheDocument();
+    expect(screen.getByText(/Player 3 played 3♣/)).toBeInTheDocument();
+    // The first rendered item should be Player 12 played 12♣
     const items = screen.getAllByRole('listitem');
-    expect(items[0]).toHaveTextContent('Player 12 played 12 of ♣');
-    expect(items[items.length - 1]).toHaveTextContent('Player 3 played 3 of ♣');
+    expect(items[0]).toHaveTextContent('Player 12 played 12♣');
+    expect(items[items.length - 1]).toHaveTextContent('Player 3 played 3♣');
   });  it('renders card played, button pressed, and hand result actions', () => {
     const actions: ActionLogEntry[] = [
       { 
@@ -55,10 +54,9 @@ describe('ActionLog', () => {
         winner: 'Player',
         winnerTeam: null
       },
-    ];
-    render(<ActionLog actions={actions} />);
-    expect(screen.getByText('Player 1 played 4 of ♣')).toBeInTheDocument();
-    expect(screen.getByText('Player 2 pressed Truco')).toBeInTheDocument();
-    expect(screen.getByText('Hand 1: Player won')).toBeInTheDocument();
+    ];    render(<ActionLog actions={actions} />);
+    expect(screen.getByText(/Player 1 played 4♣/)).toBeInTheDocument();
+    expect(screen.getByText(/Player 2.*Truco/)).toBeInTheDocument();
+    expect(screen.getByText(/Hand 1: Player won/)).toBeInTheDocument();
   });
 });

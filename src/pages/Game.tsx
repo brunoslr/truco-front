@@ -156,8 +156,7 @@ const Game: React.FC = () => {
               team: team
             };
           });setPlayers(processedPlayers);
-            // Transform played cards data to include team and current player info
-          // Always create 4 slots (one for each player)
+            // Transform played cards data to include team and current player info          // Always create 4 slots (one for each player)
           const transformedPlayedCards = [0, 1, 2, 3].map(seat => {
             const player = processedPlayers.find((p: any) => p.seat === seat);
             const playedCardData = (state.playedCards || []).find((pcd: any) => pcd.playerSeat === seat);
@@ -165,9 +164,15 @@ const Game: React.FC = () => {
             // Get team based on seat number (0,2 = Player's Team, 1,3 = Opponent Team)
             const team = (seat === 0 || seat === 2) ? "Player's Team" : "Opponent Team";
             
+            // Handle EMPTY cards from backend - treat them as null
+            let card = playedCardData?.card || null;
+            if (card && typeof card === 'object' && card.value === 'EMPTY' && card.suit === 'EMPTY') {
+              card = null;
+            }
+            
             return {
               playerName: player?.name || `Player ${seat + 1}`,
-              card: playedCardData?.card || null,
+              card: card,
               team: team,
               isCurrentPlayer: seat === playerSeat
             };
@@ -304,9 +309,15 @@ const Game: React.FC = () => {
     // Get team based on seat number (0,2 = Player's Team, 1,3 = Opponent Team)
     const team = (player?.seat === 0 || player?.seat === 2) ? "Player's Team" : "Opponent Team";
     
+    // Additional safety check: Handle EMPTY cards from backend - treat them as null
+    let card = seatPlayedCard?.card || null;
+    if (card && typeof card === 'object' && card.value === 'EMPTY' && card.suit === 'EMPTY') {
+      card = null;
+    }
+    
     return {
       playerName: player?.name || `Player ${index + 1}`,
-      card: seatPlayedCard?.card || null,
+      card: card,
       team: team,
       isCurrentPlayer: player?.seat === playerSeat
     };
